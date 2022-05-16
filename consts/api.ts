@@ -148,6 +148,14 @@ const API: I_API = {
 			stale: API_TIME.NONE,
 			allowNull: true,
 		},
+		QUOTE: {
+			route: (fromCurrency, toCurrency, amount) =>
+				`/quote?amount=${amount}&from_currency=${fromCurrency}&to_currency=${toCurrency}`,
+			method: 'get',
+			base: END_POINTS.BACK,
+			stale: API_TIME.SHORTEST,
+			allowNull: true,
+		},
 		SWAP: {
 			route: () => `/swap`,
 			method: 'post',
@@ -166,6 +174,7 @@ const API: I_API = {
 					return error;
 				},
 			},
+
 		},
 		// WHOAMI: {
 		// 	route: () => `/auth/whoami`,

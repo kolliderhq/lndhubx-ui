@@ -8,6 +8,8 @@ import { storeDispatch } from 'contexts';
 import Img from 'react-cool-img';
 import { UI } from 'consts';
 import { postRequest } from 'utils/api';
+import useSWR from 'swr';
+import { getSWROptions } from 'utils/fetchers';
 
 import Loader from './Loader';
 import { useAppSelector } from 'hooks';
@@ -65,10 +67,20 @@ const SwapForm = ({ onSwap }) => {
 	const [fromCurrency, setFromCurrency] = useState("BTC");
 	const [toCurrency, setToCurrency] = useState("USD");
 	const [availableToCurrencies, setAvailableToCurrencies] = useState([]);
+	const [lastQuote, setLastQuote] = useState(0);
+
+
+	const { data: quote} = useSWR(fromAmount !== 0 && fromCurrency !== toCurrency ? [API_NAMES.QUOTE, fromCurrency, toCurrency, fromAmount]: null);
 
 	const [fromBalance, setFromBalance] = useState(0);
 
 	const [wallets, availableWallets] = useAppSelector(state => [state.wallets.wallets, state.wallets.availableWallets]);
+
+	useMemo(() => {
+		if (!quote) return 
+		console.log(quote)
+		setLastQuote(Number(quote.rate))
+	}, [quote])
 
 	useMemo(() => {
 		if (fromCurrency !== "BTC") {
@@ -78,6 +90,11 @@ const SwapForm = ({ onSwap }) => {
 			setAvailableToCurrencies(availableWallets)
 		}
 	}, [fromCurrency, toCurrency, availableWallets])
+
+	useMemo(() => {
+		let n = roundDecimal(lastQuote * fromAmount, 8)
+		setToAmount(n)
+	}, [fromCurrency, toCurrency, fromAmount, lastQuote])
 
 	useEffect(() => {
 		if (!wallets) return

@@ -41,8 +41,6 @@ export const getRequest = (...args) => {
 		.get(url, params)
 		.then(res => {
 			const ret = apiRefiner(apiName, res.data);
-			console.log("------------------------------")
-			console.log(ret)
 			if (ret?.errObj) {
 				return Promise.reject(ret);
 			} else {

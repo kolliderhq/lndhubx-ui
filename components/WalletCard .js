@@ -59,7 +59,7 @@ export const WalletCard = () => {
 
 	return (
 		<div className="relative p-8 text-black">
-			<div className="text-lg">LndHubX Wallet</div>
+			<div className="text-lg">Kollider Wallet</div>
 			<div className="border-b border-gray-50 pb-2 text-left mt-8">Accounts</div>
 			<div></div>
 			{

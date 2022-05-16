@@ -195,8 +195,8 @@ const API: I_API = {
 			},
 		},
 		TXS: {
-			route: (from, to) =>
-				`/gettxs`,
+			route: (currency, from, to) =>
+				`/gettxs?currency=${currency}`,
 			method: 'get',
 			base: END_POINTS.BACK,
 			stale: API_TIME.SHORTEST,

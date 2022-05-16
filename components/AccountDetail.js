@@ -17,7 +17,7 @@ export const AccountDetail = () => {
 	const [walletBalance, setWalletBalance] = useState(0);
 	const [txs, setTxs] = useState([]);
 
-	const { data: newTxs } = useSWR([API_NAMES.TXS]);
+	const { data: newTxs } = useSWR([API_NAMES.TXS, selectedWallet]);
 
 	useEffect(() => {
 		if (!newTxs) return

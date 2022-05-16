@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 import { useAppSelector } from "hooks";
 import Img from "react-cool-img"
 import { UI } from "consts";
-import useSWR from "swr";
 import { API_NAMES } from "consts";
 import { getRequest } from "utils/api";
 import { QrCode } from "./QrCode";
 import { roundDecimal } from "utils/format";
+import { displayToast, TOAST_LEVEL } from "utils/toast";
 
 export const Receive = () => {
 	const [invoice, setInvoice] = useState("");
@@ -32,6 +32,15 @@ export const Receive = () => {
 		setInvoice("");
 	}
 
+	const onQrCodeClick = () => {
+		navigator.clipboard.writeText(invoice)
+		displayToast('Invoice Copied!', {
+			type: 'success',
+			level: TOAST_LEVEL.CRITICAL,
+			toastId: 'copy-invoice',
+		});
+	}
+
 	return (
 		<div className="flex flex-col h-full p-8 relative">
 			<div className="relative w-full">
@@ -48,15 +57,18 @@ export const Receive = () => {
 				<div className="text-left mt-8">
 					Account
 					<div className="mt-2">
-						<DropDown resetInovice={resetInovice}/>
+						<DropDown resetInovice={resetInovice} />
 					</div>
 				</div>
 				{
 					invoice ? (
-						<div className="flex h-full w-full">
-							<div className="m-auto border-2 rounded-xl p-2">
-								<QrCode value={invoice} wrapperClass={"border-radius: 32px"} size={256} imageSettings={{src:UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase()), x:null, y:null, height: 48, width: 48, excavate: true}} />
+						<div className="flex flex-col h-full w-full">
+							<div className="mx-auto mt-10 border-4 border-gray-400 rounded-xl p-2" onClick={() => onQrCodeClick()}>
+								<QrCode value={invoice} wrapperClass={"border-radius: 32px"} size={256} imageSettings={{ src: UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase()), x: null, y: null, height: 48, width: 48, excavate: true }} />
 							</div>
+							<button className="h-12 w-32 border mx-auto rounded-lg mt-8" onClick={() => onQrCodeClick()}>
+								Copy
+							</button>
 						</div>
 					) : (
 						<InvoiceForm onCreateInvoice={onCreateInvoice} currency={selectedWallet} />
@@ -67,7 +79,7 @@ export const Receive = () => {
 	)
 }
 
-const InvoiceForm = ({ onCreateInvoice, currency}) => {
+const InvoiceForm = ({ onCreateInvoice, currency }) => {
 	const [amount, setAmount] = useState(0);
 	const [memo, setMemo] = useState("");
 	return (
@@ -111,7 +123,7 @@ const InvoiceForm = ({ onCreateInvoice, currency}) => {
 	)
 }
 
-const DropDown = ({resetInovice}) => {
+const DropDown = ({ resetInovice }) => {
 	const [showDropDown, setShowDropDown] = useState(false);
 
 	const [wallets, selectedWallet] = useAppSelector(state => [state.wallets.wallets, state.wallets.selectedWallet]);
@@ -180,7 +192,7 @@ const Dropped = ({ onClickDropDown }) => {
 
 						<div className="grid justify-items-end w-full">
 							<div className="flex">
-								<div>{wallets[currency]? roundDecimal(wallets[currency].balance, 8): 0}</div>
+								<div>{wallets[currency] ? roundDecimal(wallets[currency].balance, 8) : 0}</div>
 							</div>
 						</div>
 					</div>

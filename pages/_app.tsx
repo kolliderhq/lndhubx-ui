@@ -29,7 +29,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 					onErrorRetry: defaultOnErrorRetry,
 				}}>
 				<DefaultSeo
-					title="LndHubX"
+					title="Kollider Wallet"
 					description="Synthetic stablecoins."
 					canonical={'trade.kollider.xyz'}
 					twitter={{

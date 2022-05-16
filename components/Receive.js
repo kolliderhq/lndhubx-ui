@@ -11,6 +11,7 @@ import useSWR from "swr";
 import { API_NAMES } from "consts";
 import { getRequest } from "utils/api";
 import { QrCode } from "./QrCode";
+import { roundDecimal } from "utils/format";
 
 export const Receive = () => {
 	const [invoice, setInvoice] = useState("");
@@ -43,10 +44,6 @@ export const Receive = () => {
 				</div>
 			</div>
 			<div className="text-black mt-4">
-				{/* <div className="flex"> */}
-				{/* <Img src={UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase())} className="h-10 w-10" /> */}
-				{/* <div className="text-2xl text-black my-auto ml-4">{selectedWallet}</div> */}
-				{/* </div> */}
 				<div className="mt-4 text-xl">Receive</div>
 				<div className="text-left mt-8">
 					Account
@@ -123,7 +120,7 @@ const DropDown = ({resetInovice}) => {
 
 	useEffect(() => {
 		let balance = wallets[selectedWallet] ? wallets[selectedWallet].balance : 0;
-		setWalletBalance(balance)
+		setWalletBalance(roundDecimal(balance, 8))
 	}, [wallets, selectedWallet]);
 
 	const onClickDropDown = () => {
@@ -183,7 +180,7 @@ const Dropped = ({ onClickDropDown }) => {
 
 						<div className="grid justify-items-end w-full">
 							<div className="flex">
-								<div>{wallets[currency]? wallets[currency].balance: 0}</div>
+								<div>{wallets[currency]? roundDecimal(wallets[currency].balance, 8): 0}</div>
 							</div>
 						</div>
 					</div>

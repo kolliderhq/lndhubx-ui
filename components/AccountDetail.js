@@ -5,14 +5,24 @@ import Img from "react-cool-img"
 import { ImArrowLeft2 } from "react-icons/im"
 import { UI } from "consts";
 import { useAppSelector } from "hooks"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { CURRENCY_SYMBOL_MAP } from "consts/misc/currency"
 import { roundDecimal } from "utils/format"
+import useSWR from "swr"
+import { API_NAMES } from "consts"
+import { formatDayHour } from "utils/time"
 
 export const AccountDetail = () => {
 	const [selectedWallet, wallets] = useAppSelector(state => [state.wallets.selectedWallet, state.wallets.wallets])
 	const [walletBalance, setWalletBalance] = useState(0);
 	const [txs, setTxs] = useState([]);
+
+	const { data: newTxs } = useSWR([API_NAMES.TXS]);
+
+	useEffect(() => {
+		if (!newTxs) return
+		setTxs(newTxs.reverse())
+	})
 
 	useEffect(() => {
 		let balance = wallets[selectedWallet] ? wallets[selectedWallet].balance : 0;
@@ -35,7 +45,7 @@ export const AccountDetail = () => {
 				<div className="text-2xl text-black my-auto text-left mt-6">{walletBalance}</div>
 				<div className="flex flex-row mt-6">
 					<div className="m-auto">
-						<button className="border rounded-lg px-8 py-2 w-40">Send</button>
+						<button className="border rounded-lg px-8 py-2 w-40" onClick={() => storeDispatch(setView(VIEWS.SEND))}>Send</button>
 					</div>
 					<div className="m-auto">
 						<button className="border rounded-lg px-8 py-2 w-40" onClick={() => storeDispatch(setView(VIEWS.RECEIVE))}>Receive</button>
@@ -45,7 +55,7 @@ export const AccountDetail = () => {
 				<div className="flex h-full">
 					{
 						txs.length !== 0 ? (
-							<div></div>
+							<Table txs={txs} />
 						) : (
 							<div className="m-auto">
 								<div className="text-xl font-bold">Add funds to get started</div>
@@ -55,6 +65,88 @@ export const AccountDetail = () => {
 						)
 					}
 				</div>
+			</div>
+		</div>
+	)
+}
+
+const Table = ({ txs }) => {
+	return (
+		<div className="overflow-auto w-full">
+			<div className="w-full h-32">
+				{
+					txs.map(tx => (
+						<TableCell tx={tx} />
+					))
+				}
+			</div>
+		</div>
+	)
+}
+
+const TableCell = ({ tx }) => {
+	const [action, setAction] = useState("");
+	const [isPayment, setIsPayment] = useState(false);
+	const [currencyIcon, setCurrencyIcon] = useState("");
+	const [isFiat, setIsFiat] = useState(false)
+
+	useMemo(() => {
+		console.log(tx)
+		if (tx.outboundUid === 23193913) {
+			setAction("Received")
+		} else if (tx.inboundUid === 23193913) {
+			setAction("Send")
+		} else {
+			setAction("Swap")
+		}
+
+		if (tx.inboundCurrency === tx.outboundCurrency) {
+			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("btc"))
+			setIsFiat(false)
+		}
+		if (tx.inboundCurrency === "EUR" || tx.outboundCurrency === "EUR") {
+			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("btceur"))
+			setIsFiat(true)
+		}
+
+		if (tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD") {
+			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("btcusd"))
+			setIsFiat(true)
+		}
+
+	}, [tx])
+	return (
+		<div className="h-16 bg-gray-25 rounded-lg mt-2">
+			<div className="flex grid grid-cols-2 h-full">
+				<div className="my-auto ml-4 flex">
+					<div className="my-auto">
+						{
+							!isFiat ? (
+								<Img src={currencyIcon} className="h-8 w-8" />
+							) : (
+								<Img src={currencyIcon} className="h-5 w-8" />
+							)
+						}
+					</div>
+					<div className="flex flex-col text-left">
+						<div className="ml-2 font-bolt text-sm my-auto">{action}</div>
+						<div className="ml-2 font-light text-xs my-auto">{formatDayHour(tx.createdAt)}</div>
+					</div>
+				</div>
+				{
+					action === "Received" && (
+						<div className="my-auto text-green-400">
+							+{roundDecimal(tx.inboundAmount, 8)}
+						</div>
+					)
+				}
+				{
+					action === "Send" && (
+						<div className="my-auto text-red-400">
+							-{roundDecimal(tx.inboundAmount, 8)}
+						</div>
+					)
+				}
 			</div>
 		</div>
 	)

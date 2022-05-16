@@ -13,8 +13,9 @@ export const Footer = () => {
 						<a href="https://kollider.xyz" className="mx-auto cursor-pointer">
 						<div className="flex flex-col mx-auto">
 							<div className="text-gray-800">Powered by </div>
-							<div className="mx-auto">
-							<img className="w-15 h-[15px]" src="/assets/logos/kollider_logo_black.png" />
+							<div className="mx-auto text-black">
+								LndHubX
+							{/* <img className="w-15 h-[15px]" src="/assets/logos/kollider_logo_black.png" /> */}
 							</div>
 						</div>
 						</a>

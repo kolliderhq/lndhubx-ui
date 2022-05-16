@@ -303,6 +303,16 @@ refiner.set(API_NAMES.QUOTE, data => {
 	return camelCaseAllKeys(data);
 });
 
+refiner.set(API_NAMES.PAY, data => {
+	console.log({data: camelCaseAllKeys(data)})
+	return camelCaseAllKeys(data);
+});
+
+refiner.set(API_NAMES.TXS, data => {
+	console.log({data: camelCaseAllKeys(data)})
+	return camelCaseAllKeys(data);
+});
+
 export const apiRefiner = (name, data) => {
 	let refinerFunc = null;
 	if (refiner.has(name)) {

@@ -176,6 +176,32 @@ const API: I_API = {
 			},
 
 		},
+		PAY: {
+			route: () => `/payinvoice`,
+			method: 'post',
+			base: END_POINTS.BACK,
+			stale: API_TIME.NONE,
+			allowNull: true,
+			createBody: params => ({
+				payment_request: params.paymentRequest,
+				currency: params.currency,
+			}),
+			customOptions: {
+				...postOptions,
+				dedupingInterval: 0,
+				onError: (error, key, config) => {
+					return error;
+				},
+			},
+		},
+		TXS: {
+			route: (from, to) =>
+				`/gettxs`,
+			method: 'get',
+			base: END_POINTS.BACK,
+			stale: API_TIME.SHORTEST,
+			allowNull: true,
+		}
 		// WHOAMI: {
 		// 	route: () => `/auth/whoami`,
 		// 	method: 'get',

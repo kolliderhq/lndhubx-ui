@@ -20,7 +20,7 @@ export const API_TIME: Record<string, DeepReadonly<number>> = {
 
 let back;
 if (process.env.NEXT_PUBLIC_BACK_ENV === 'production') {
-	back = 'https://api.kollider.xyz/v1';
+	back = 'https://lndhubx.kollider.xyz';
 	// back = 'http://api.staging.kollider.internal/v1';
 	// TODO : remove after you debug the issue
 

@@ -1,0 +1,92 @@
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+import { Nullable } from 'utils/types/utils';
+
+interface ConnectionState {
+	apiKey: string;
+	isOnline: boolean;
+	serviceStatus: {
+		status: string;
+		msg: string;
+	};
+	isWsConnected: boolean;
+	isWsAuthenticated: boolean;
+
+	isUmbrelConnected: boolean;
+	isUmbrelAuthenticated: boolean;
+
+	isWeblnConnected: Nullable<boolean>;
+	isLoggedIn: boolean,
+}
+
+const initialState: ConnectionState = {
+	apiKey: '',
+	isOnline: false,
+
+	serviceStatus: {
+		status: 'NotRunning',
+		msg: 'Under Maintenance',
+	},
+	isWsConnected: false,
+	isWsAuthenticated: false,
+	isLoggedIn: false,
+
+	isUmbrelConnected: false,
+	isUmbrelAuthenticated: false,
+
+	isWeblnConnected: null,
+	// webln is removed - instead it is re-requested each time it is used
+};
+
+export const connectionSlice = createSlice({
+	name: 'connection',
+	initialState,
+	reducers: {
+		setIsOnline: (state, action: PayloadAction<boolean>) => {
+			state.isOnline = action.payload;
+		},
+		setApiKey: (state, action: PayloadAction<string>) => {
+			axios.defaults.headers.common['Authorization'] = action.payload;
+			state.apiKey = action.payload;
+		},
+		setIsLoggedIn: (state, action: PayloadAction<boolean>) => {
+			state.isLoggedIn = action.payload;
+		},
+		setIsWsConnected: (state, action: PayloadAction<boolean>) => {
+			state.isWsConnected = action.payload;
+			if (action.payload === false) {
+				state.isWsAuthenticated = false;
+			}
+		},
+		setIsWsAuthenticated: (state, action: PayloadAction<boolean>) => {
+			state.isWsAuthenticated = action.payload;
+		},
+		setWeblnConnected: (state, action: PayloadAction<boolean>) => {
+			state.isWeblnConnected = action.payload;
+		},
+		setServiceStatus: (state, action: PayloadAction<{ status: string; msg: string }>) => {
+			state.serviceStatus = action.payload;
+		},
+		setIsUmbrelConnected: (state, action: PayloadAction<boolean>) => {
+			state.isUmbrelConnected = action.payload;
+		},
+		setIsUmbrelAuthenticated: (state, action: PayloadAction<boolean>) => {
+			state.isUmbrelAuthenticated = action.payload;
+		},
+	},
+});
+
+export const {
+	setIsOnline,
+	setIsUmbrelConnected,
+	setIsUmbrelAuthenticated,
+	setApiKey,
+	setIsWsConnected,
+	setIsWsAuthenticated,
+	setWeblnConnected,
+	setServiceStatus,
+	setIsLoggedIn,
+} = connectionSlice.actions;
+
+export default connectionSlice.reducer;

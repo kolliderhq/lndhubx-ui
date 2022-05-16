@@ -16,7 +16,7 @@ export const Info = () => {
 			<div className="text-lg">What is Lndhubx</div>
 			<div className="flex flex-col text-gray-600 text-left">
 				<div className="mt-5">
-					<p>Lndhubx allows you to create a synthetic USD account with you lightning Bitcoin.</p>
+					<p>Lndhubx allows you to create a synthetic fiat currency account with you lightning Bitcoin.</p>
 				</div>
 				<div className="mt-5 font-bold text-lg text-gray-800">What's a synthetic USD account?</div>
 				<p className="text-sm">A synthetic USD account is a short Bitcoin position against the USD dollar, that is settled in Bitcoin.</p>

@@ -14,7 +14,7 @@ import { API_NAMES, UI, VIEWS } from 'consts';
 import useSWR from 'swr';
 import { getSWROptions } from 'utils/fetchers';
 import { setAvailableWallets, storeDispatch } from 'contexts';
-import Img from 'next/image';
+import Img from 'react-cool-img';
 
 export const WalletCard = () => {
 	const [wallets, availableWallets, selectedWallet] = useAppSelector(state => [
@@ -59,7 +59,17 @@ export const WalletCard = () => {
 
 	return (
 		<div className="relative p-8 text-black">
-			<div className="text-lg">Kollider Wallet</div>
+			<div className="text-lg flex flex-row">
+				<div className='m-auto flex'>
+					<div className="mx-auto">
+						<Img src="/assets/logos/kollider_icon_black.png" className="w-10 animate-pulse" />
+					</div>
+					{/* <div className="ml-3 my-auto">
+						Wallet */}
+					{/* </div> */}
+
+				</div>
+			</div>
 			<div className="border-b border-gray-50 pb-2 text-left mt-8">Accounts</div>
 			<div></div>
 			{
@@ -106,9 +116,9 @@ const AccountListItem = (currency, wallet) => {
 				</div>
 				<div className="m-auto">
 					<p className="truncate ...">
-					{
-						roundDecimal(wallet.balance, 8)
-					}
+						{
+							roundDecimal(wallet.balance, 8)
+						}
 					</p>
 				</div>
 			</div>

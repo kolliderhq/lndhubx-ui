@@ -3,6 +3,7 @@ import { storeDispatch } from "contexts"
 import { setView } from "contexts/modules/layout"
 import Img from "react-cool-img"
 import { ImArrowLeft2 } from "react-icons/im"
+import { MdFileDownload, MdSend } from "react-icons/md"
 import { UI } from "consts";
 import { useAppSelector } from "hooks"
 import { useEffect, useMemo, useState } from "react"
@@ -21,7 +22,7 @@ export const AccountDetail = () => {
 
 	useEffect(() => {
 		if (!newTxs) return
-		setTxs(newTxs.reverse())
+		setTxs(newTxs.sort((a, b) => (a.createdAt < b.createdAt)))
 	})
 
 	useEffect(() => {
@@ -45,10 +46,30 @@ export const AccountDetail = () => {
 				<div className="text-2xl text-black my-auto text-left mt-6">{walletBalance}</div>
 				<div className="flex flex-row mt-6">
 					<div className="m-auto">
-						<button className="border rounded-lg px-8 py-2 w-40" onClick={() => storeDispatch(setView(VIEWS.SEND))}>Send</button>
+						<button className="border rounded-lg px-8 py-2 w-40 flex" onClick={() => storeDispatch(setView(VIEWS.SEND))}>
+							<div className="mx-auto flex">
+								<div className="">
+									Send
+								</div>
+
+								<div className="my-auto text-lg ml-2">
+									<MdSend />
+								</div>
+							</div>
+						</button>
 					</div>
 					<div className="m-auto">
-						<button className="border rounded-lg px-8 py-2 w-40" onClick={() => storeDispatch(setView(VIEWS.RECEIVE))}>Receive</button>
+						<button className="border rounded-lg px-8 py-2 w-40 flex" onClick={() => storeDispatch(setView(VIEWS.RECEIVE))}>
+							<div className="mx-auto flex">
+								<div className="">
+									Receive
+								</div>
+								<div className="my-auto text-lg ml-2">
+									<MdFileDownload />
+								</div>
+							</div>
+						</button>
+
 					</div>
 				</div>
 				<div className="mt-4 text-left border-b pb-2 border-gray-50">Transactions</div>

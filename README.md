@@ -1,6 +1,6 @@
-# Zonic 
+# LndHubX UI 
 
-Zonic is an Umbrel app that allows users to open a synthetic USD account directly from their LND node. 
+Zonic is n Umbrel app that allows users to open a synthetic USD account directly from their LND node. 
 
 ## Main Concept
 

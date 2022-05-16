@@ -1,10 +1,9 @@
-import { useAppDispatch } from 'hooks';
-import { TABS } from 'consts';
-import { setTab } from 'contexts/modules/layout';
+import { VIEWS } from 'consts';
+import { setView } from 'contexts/modules/layout';
 import { ImArrowLeft2 } from 'react-icons/im';
+import { storeDispatch } from 'contexts';
 
 export const Info = () => {
-	const dispatch = useAppDispatch()
 	return (
 		<div className="flex flex-col h-full p-8 relative text-black">
 			<div className="flex flex-row w-full text-4xl text-gray-600">
@@ -30,9 +29,6 @@ export const Info = () => {
 						<li>It is <span className="font-bold">not</span> a stablecoin.</li>
 					</ul>
 				</div>
-			</div>
-			<div className="mt-8">
-				<button className="bg-red-400 text-white rounded-lg w-3/4 py-2" onClick={() => auth.logoutUser()}>Logout</button>
 			</div>
 		</div>
 	)

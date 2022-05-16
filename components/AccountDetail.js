@@ -143,7 +143,7 @@ const TableCell = ({ tx }) => {
 				{
 					action === "Send" && (
 						<div className="my-auto text-red-400">
-							-{roundDecimal(tx.inboundAmount, 8)}
+							-{roundDecimal(tx.outboundAmount, 8)}
 						</div>
 					)
 				}

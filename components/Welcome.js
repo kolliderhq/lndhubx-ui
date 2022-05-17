@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector, useSymbolData, useSymbols } from 'hooks
 import { storeDispatch } from 'contexts';
 import { setView } from 'contexts/modules/layout';
 import { VIEWS } from 'consts';
+import Img from 'react-cool-img';
 
 export const Welcome = ({ }) => {
 	const dispatch = useAppDispatch();
@@ -18,12 +19,15 @@ export const Welcome = ({ }) => {
 
 		<div className="flex flex-col w-full h-full text-gray-600">
 			<div className="m-auto">
-				<div className="w-full flex justify-center text-center text-4xl">
-					<BsFillShieldLockFill />
+				<div className="w-full flex flex-col justify-center text-center text-black text-xl">
+					<div className="m-auto">
+						<Img src="/assets/logos/kollider_icon_black.png" className="w-12" />
+					</div>
+					<div className="mt-2 m-auto">Wallet</div>
 				</div>
 				<div className="flex flex-col items-center">
 					<div className="mx-auto max-w-xxxs w-full px-4py-4">
-						<p className="text-lg text-center py-5">LndHubX</p>
+						<p className="text-lg text-center py-5"></p>
 						<p> To get started create a new wallet or login.</p>
 					</div>
 				</div>

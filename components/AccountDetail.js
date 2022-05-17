@@ -114,7 +114,6 @@ const TableCell = ({ tx }) => {
 	const [imageClass, setImageClass] = useState(cn("h-8 w-8"))
 
 	useMemo(() => {
-		console.log(tx)
 		if (tx.outboundUid === 23193913) {
 			setAction("Received")
 		} else if (tx.inboundUid === 23193913) {

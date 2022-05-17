@@ -12,6 +12,7 @@ import { roundDecimal } from "utils/format"
 import useSWR from "swr"
 import { API_NAMES } from "consts"
 import { formatDayHour } from "utils/time"
+import cn from 'clsx';
 
 export const AccountDetail = () => {
 	const [selectedWallet, wallets] = useAppSelector(state => [state.wallets.selectedWallet, state.wallets.wallets])
@@ -110,6 +111,7 @@ const TableCell = ({ tx }) => {
 	const [isPayment, setIsPayment] = useState(false);
 	const [currencyIcon, setCurrencyIcon] = useState("");
 	const [isFiat, setIsFiat] = useState(false)
+	const [imageClass, setImageClass] = useState(cn("h-8 w-8"))
 
 	useMemo(() => {
 		console.log(tx)
@@ -118,21 +120,31 @@ const TableCell = ({ tx }) => {
 		} else if (tx.inboundUid === 23193913) {
 			setAction("Send")
 		} else {
+			console.log(tx)
 			setAction("Swap")
 		}
 
 		if (tx.inboundCurrency === tx.outboundCurrency) {
 			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("btc"))
-			setIsFiat(false)
 		}
-		if (tx.inboundCurrency === "EUR" || tx.outboundCurrency === "EUR") {
+		if ((tx.inboundCurrency === "EUR" || tx.outboundCurrency === "EUR") && tx.txType === "Internal") {
 			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("btceur"))
-			setIsFiat(true)
+			setImageClass(cn("h-5 w-8"));
 		}
 
-		if (tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD") {
+		if ((tx.inboundCurrency === "EUR" || tx.outboundCurrency === "EUR") && tx.txType === "External") {
+			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("eur"))
+			setImageClass(cn("h-8 w-8"));
+		}
+
+		if (tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD" && tx.txType === "Internal") {
 			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("btcusd"))
-			setIsFiat(true)
+			setImageClass(cn("h-5 w-8"));
+		}
+
+		if (tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD" && tx.txType === "External") {
+			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("usd"))
+			setImageClass(cn("h-8 w-8"));
 		}
 
 	}, [tx])
@@ -141,13 +153,7 @@ const TableCell = ({ tx }) => {
 			<div className="flex grid grid-cols-2 h-full">
 				<div className="my-auto ml-4 flex">
 					<div className="my-auto">
-						{
-							!isFiat ? (
-								<Img src={currencyIcon} className="h-8 w-8" />
-							) : (
-								<Img src={currencyIcon} className="h-5 w-8" />
-							)
-						}
+						<Img src={currencyIcon} className={imageClass} />
 					</div>
 					<div className="flex flex-col text-left">
 						<div className="ml-2 font-bolt text-sm my-auto">{action}</div>
@@ -157,14 +163,21 @@ const TableCell = ({ tx }) => {
 				{
 					action === "Received" && (
 						<div className="my-auto text-green-400">
-							+{roundDecimal(tx.inboundAmount, 8)}
+							+{roundDecimal(Number(tx.inboundAmount), 8)}
 						</div>
 					)
 				}
 				{
 					action === "Send" && (
 						<div className="my-auto text-red-400">
-							-{roundDecimal(tx.outboundAmount, 8)}
+							-{roundDecimal(Number(tx.outboundAmount), 8)}
+						</div>
+					)
+				}
+				{
+					action === "Swap" && (
+						<div className="my-auto">
+							{roundDecimal(Number(tx.outboundAmount), 8)}
 						</div>
 					)
 				}

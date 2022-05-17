@@ -237,12 +237,9 @@ export async function loginUser(loginData) {
 		storeDispatch(setUserData(userObj));
 		storeDispatch(setIsLoggedIn(true));
 		storeDispatch(setView(VIEWS.OVERVIEW));
-
 		return res
 	} catch (ex) {
-		LOG5('anon user registration failed', 'Login');
-		console.error(ex);
-		throw new Error('anon user generation failed');
+		throw new Error(ex.data);
 	}
 }
 

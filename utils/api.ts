@@ -25,10 +25,10 @@ export const postRequest = (...args) => {
 			}
 		})
 		.catch(ex => {
-			if (ex.response?.status === 500) {
+			// if (ex.response?.status === 500) {
 				// TODO : do error handling
 				// displayToast('Internal server error', 'error', { autoClose: 10000, position: 'top-right' }, 'Critical Error');
-			}
+			// }
 			LOG3(ex?.response, `[PostError - ${apiName}`);
 			throw new CustomError('Post Error', ex);
 		});

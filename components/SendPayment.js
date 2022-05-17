@@ -2,33 +2,47 @@ import { MdClose, MdOutlineArrowDropDown, MdEast } from 'react-icons/md';
 
 import { VIEWS } from 'consts';
 import { setView } from 'contexts/modules/layout';
-import { useAppDispatch } from 'hooks';
 import { storeDispatch } from 'contexts';
-import ligtningPayReq from 'bolt11';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from 'hooks';
 import Img from 'react-cool-img';
 import { UI } from 'consts';
 import { setSelectedWallet } from 'contexts';
-import { roundDecimal } from 'utils/format';
+import { getTime, roundDecimal } from 'utils/format';
 import { postRequest } from 'utils/api';
 import { API_NAMES } from 'consts';
+import bolt from 'bolt11';
+import useSWR from 'swr';
+import { CURRENCY_SYMBOL_MAP } from 'consts/misc/currency';
+import { displayToast, TOAST_LEVEL } from 'utils/toast';
+import Loader from './Loader';
 
 export const SendPayment = () => {
 
-	const [selectedWallet] = useAppSelector(state => [state.wallets.selectedWallet]);
+	const [selectedWallet, wallets] = useAppSelector(state => [state.wallets.selectedWallet, state.wallets.wallets]);
 
 	const [invoice, setInvoice] = useState("");
 	const [currency, setCurrency] = useState("");
 	const [isPaymentComplete, setIsPaymentComplete] = useState(false);
 	const [paymentObj, setPaymentObj] = useState({ amount: 0, currency: "BTC", rate: 1, paymentRequest: "" })
+	const [amount, setAmount] = useState(0);
+	const [balance, setBalance] = useState(0);
+	const [isPaying, setIsPaying] = useState(false);
 
 	const onPayInvoice = async () => {
 		if (!invoice) return
 		if (!currency) return
+		setIsPaying(true);
 		const res = await postRequest(API_NAMES.PAY, [], { paymentRequest: invoice, currency: currency });
+		setIsPaying(false);
 		if (res.success) {
 			setIsPaymentComplete(true)
+		} else {
+			displayToast('Payment Failed', {
+				type: 'error',
+				level: TOAST_LEVEL.CRITICAL,
+				toastId: 'copy-invoice',
+			});
 		}
 	}
 
@@ -37,21 +51,11 @@ export const SendPayment = () => {
 		setCurrency(selectedWallet);
 	}, [selectedWallet])
 
-	// useEffect(() => {
-	// 	if (!invoice) return
-	// 	try {
-	// 		let decoded = ligtningPayReq.decode(invoice)
-	// 		console.log(decoded)
-	// 		setDecodedInvoice(decoded)
-	// 		setAmount((decoded.millisatoshis / 1000).toString())
-	// 		let time = new Date(decoded.timeExpireDate)
-	// 		setExpiry(time.toUTCString())
-	// 	} catch (err) {
-	// 		setDecodedInvoice(null)
-	// 		setAmount("")
-	// 		setExpiry("")
-	// 	}
-	// }, [invoice, amount, expiry])
+	useEffect(() => {
+		if (!selectedWallet || !wallets) return
+		setBalance(wallets[selectedWallet].balance)
+
+	}, [wallets])
 
 	return (
 		<div className="flex flex-col h-full p-8 relative text-black">
@@ -68,19 +72,69 @@ export const SendPayment = () => {
 			<div className="mt-2">
 				<DropDown />
 			</div>
-			<div className="h-full w-full">
-				{
-					isPaymentComplete ? (
-						<PaymentComplete paymentObj={paymentObj} />
-					) : (
-						<InvoiceForm invoice={invoice} setInvoice={setInvoice} onPayInvoice={onPayInvoice} />
-					)
-				}
-			</div>
+			{
+				isPaying ? (
+					<div className="m-auto text-gray-500">
+					<Loader color={"gray"} />
+					Paying
+					</div>
+				) : (
+					<div className="h-full w-full">
+						{
+							isPaymentComplete ? (
+								<PaymentComplete paymentObj={paymentObj} />
+							) : (
+								<InvoiceForm invoice={invoice} setInvoice={setInvoice} onPayInvoice={onPayInvoice} currency={selectedWallet} balance={balance} />
+							)
+						}
+					</div>
+				)
+			}
 		</div>
 	);
 };
-const InvoiceForm = ({ invoice, setInvoice, onPayInvoice }) => {
+const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) => {
+	const [amount, setAmount] = useState(0);
+	const [fiatAmount, setFiatAmount] = useState(0);
+	const [nodeKey, setNodeKey] = useState("");
+	const [expiry, setExpiry] = useState(null);
+	const [invoiceValid, setInvoiceValid] = useState(false);
+	const [quote, setQuote] = useState(1);
+	const [hasSufficienFunds, setHasSufficientFunds] = useState(true);
+
+	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
+
+	useEffect(() => {
+		if (!invoice) return
+		try {
+			let decoded = bolt.decode(invoice);
+			setAmount(decoded.satoshis / 100000000);
+			setNodeKey(decoded.payeeNodeKey);
+			setExpiry(decoded.timeExpireDate);
+			setInvoiceValid(true)
+			console.log(decoded);
+		} catch (err) {
+			setInvoiceValid(false)
+		}
+	}, [invoice])
+
+	useEffect(() => {
+		if (!newQuote) return
+		setQuote(newQuote);
+		setFiatAmount(roundDecimal(amount / Number(newQuote.rate), 8))
+	}, [newQuote])
+
+	useEffect(() => {
+		if (currency === "BTC" && balance < amount) {
+			setHasSufficientFunds(false);
+		} else if (currency !== "BTC" && balance < fiatAmount) {
+			setHasSufficientFunds(true);
+		} else {
+			setHasSufficientFunds(true);
+		}
+
+	}, [amount, balance])
+
 	return (
 		<div>
 			<div className="text-left mt-8">
@@ -98,16 +152,49 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice }) => {
 					</div>
 				</div>
 			</div>
-			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
-				<button
-					onClick={() => onPayInvoice()}
-					className="border-gray-600 border-2 hover:opacity-80 cursor-pointer border rounded-lg w-5/6 px-5 py-3">
-					<div className="flex flex-row">
-						<div className="mx-auto w-32 flex">
-							<div className="mx-auto">Pay</div>
-						</div>
+			<div className="grid grid-cols-2 mt-8 p-4 font-light">
+				<div className="text-left w-full">Amount</div>
+				<div className="text-right w-full">
+					<div>
+						{amount} BTC
 					</div>
-				</button>
+					{
+						currency !== "BTC" && (
+							<div> {CURRENCY_SYMBOL_MAP[currency]} {fiatAmount}</div>
+						)
+					}
+				</div>
+
+				<div className="text-left w-full mt-2">NodeKey</div>
+				<div className="text-right w-full truncate ... mt-2">{nodeKey ? nodeKey : "-"} </div>
+
+				<div className="text-left w-full mt-2">Expiry</div>
+				<div className="text-right w-full truncate ... mt-2">{expiry ? getTime(expiry * 1000) : "-"} </div>
+			</div>
+			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
+				{
+					hasSufficienFunds ? (
+						<button
+							onClick={() => onPayInvoice()}
+							className="border-green-500 text-green-500 border-2 hover:opacity-80 cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+							<div className="flex flex-row">
+								<div className="mx-auto w-32 flex">
+									<div className="mx-auto">Pay</div>
+								</div>
+							</div>
+						</button>
+					) : (
+						<button
+							// onClick={}
+							className="border-red-600 border-2 text-red-600 hover:opacity-80 cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+							<div className="flex flex-row">
+								<div className="mx-auto w-32 flex">
+									<div className="mx-auto">Insufficient Funds</div>
+								</div>
+							</div>
+						</button>
+					)
+				}
 			</div>
 		</div>
 	)

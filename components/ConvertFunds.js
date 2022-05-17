@@ -231,10 +231,22 @@ const Dropped = ({ setCurrency, onClickDropDown, availableCurrencies }) => {
 }
 
 const SwapComplete = ({ swapObj }) => {
+	const [imgUrl, setImgUrl] = useState("");
+	useMemo(() => {
+		if (swapObj.fromCurrency === "EUR" ||  swapObj.toCurrency === "EUR") {
+			setImgUrl("/assets/currency-icons/btceur.png");
+		}
+		if (swapObj.fromCurrency === "USD" ||  swapObj.toCurrency === "USD") {
+			setImgUrl("/assets/currency-icons/btcusd.png");
+		}
+	}, [swapObj])
 	return (
 		<div className="flex flex-col h-full relative">
-			<div className="m-auto flex flex-col w-full">
-				<div>Swap Complete</div>
+			<div className="mt-24 flex flex-col w-full">
+				<div className="m-auto">
+					<Img src={imgUrl} className="w-32"/>
+				</div>
+				<div className="mt-4">Swap Complete</div>
 				<div className="m-auto w-5/6 h-24 border rounded-xl mt-4">
 					<div className="grid grid-cols-3 flex h-full">
 						<div className="m-auto flex flex-col">

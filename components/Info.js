@@ -25,7 +25,7 @@ export const Info = () => {
 				<div className="mt-5 font-bold text-lg text-gray-800">What LndhubX isn't</div>
 				<div>
 					<ul class="list-disc px-4 text-sm">
-						<li>USD balance on Lndhubx is not non-custodial. However, the Bitcoin balance is.</li>
+						<li>USD balance on Lndhubx is not non-custodial.</li>
 						<li>It is <span className="font-bold">not</span> a stablecoin.</li>
 					</ul>
 				</div>

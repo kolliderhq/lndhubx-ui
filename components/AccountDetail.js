@@ -23,6 +23,9 @@ export const AccountDetail = () => {
 
 	useEffect(() => {
 		if (!newTxs) return
+		if (selectedWallet === "BTC") {
+			newTxs = newTxs.filter(e => (e.inboundCurrency === "BTC" && e.outboundCurrency === "BTC") || e.txType === "Internal");
+		}
 		setTxs(newTxs.sort((a, b) => (a.createdAt < b.createdAt)))
 	})
 
@@ -112,15 +115,26 @@ const TableCell = ({ tx }) => {
 	const [currencyIcon, setCurrencyIcon] = useState("");
 	const [isFiat, setIsFiat] = useState(false)
 	const [imageClass, setImageClass] = useState(cn("h-8 w-8"))
+	const [outgoingSwap, setOutGoingSwap] = useState(false);
+
+	const [selectedWallet] = useAppSelector(state => [state.wallets.selectedWallet]);
 
 	useMemo(() => {
 		if (tx.outboundUid === 23193913) {
 			setAction("Received")
 		} else if (tx.inboundUid === 23193913) {
 			setAction("Send")
-		} else {
-			console.log(tx)
+		} else if (tx.inboundUid !== tx.outboundUid) {
+			setAction("Interna Tx")
+		} else if (tx.inboundUid === tx.outboundUid) {
+			if (tx.outboundCurrency === selectedWallet) {
+				setOutGoingSwap(true);
+			} else {
+				setOutGoingSwap(false);
+			}
 			setAction("Swap")
+		} else {
+			setAction("?")
 		}
 
 		if (tx.inboundCurrency === tx.outboundCurrency) {
@@ -136,12 +150,12 @@ const TableCell = ({ tx }) => {
 			setImageClass(cn("h-8 w-8"));
 		}
 
-		if (tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD" && tx.txType === "Internal") {
+		if ((tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD") && tx.txType === "Internal" && tx.inboundUid === tx.outboundUid) {
 			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("btcusd"))
 			setImageClass(cn("h-5 w-8"));
 		}
 
-		if (tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD" && tx.txType === "External") {
+		if ((tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD") && tx.txType === "External") {
 			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("usd"))
 			setImageClass(cn("h-8 w-8"));
 		}
@@ -174,9 +188,16 @@ const TableCell = ({ tx }) => {
 					)
 				}
 				{
-					action === "Swap" && (
-						<div className="my-auto">
-							{roundDecimal(Number(tx.outboundAmount), 8)}
+					action === "Swap" && outgoingSwap && (
+						<div className="my-auto text-red-400">
+							- {roundDecimal(Number(tx.outboundAmount), 8)}
+						</div>
+					)
+				}
+				{
+					action === "Swap" && !outgoingSwap && (
+						<div className="my-auto text-green-400">
+							+ {roundDecimal(Number(tx.inboundAmount), 8)}
 						</div>
 					)
 				}

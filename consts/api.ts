@@ -137,7 +137,7 @@ const API: I_API = {
 			route: () => `/balance`,
 			method: 'get',
 			base: END_POINTS.BACK,
-			stale: API_TIME.SHORTER,
+			stale: API_TIME.SHORTEST,
 			allowNull: true,
 		},
 		ADD_INVOICE: {

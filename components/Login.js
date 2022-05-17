@@ -23,6 +23,7 @@ export const Login = () => {
 				type: 'error',
 				level: TOAST_LEVEL.CRITICAL,
 			});
+			setIsLoading(false)
 		}
 	}
 

@@ -117,7 +117,7 @@ const TableCell = ({ tx }) => {
 	const [imageClass, setImageClass] = useState(cn("h-8 w-8"))
 	const [outgoingSwap, setOutGoingSwap] = useState(false);
 
-	const [selectedWallet] = useAppSelector(state => [state.wallets.selectedWallet]);
+	const [selectedWallet, whoAmI] = useAppSelector(state => [state.wallets.selectedWallet, state.user.meta]);
 
 	useMemo(() => {
 		if (tx.outboundUid === 23193913) {
@@ -125,7 +125,11 @@ const TableCell = ({ tx }) => {
 		} else if (tx.inboundUid === 23193913) {
 			setAction("Send")
 		} else if (tx.inboundUid !== tx.outboundUid) {
-			setAction("Interna Tx")
+			if (tx.outboundUid === whoAmI.uid) {
+				setAction("Send")
+			} else {
+				setAction("Received");
+			}
 		} else if (tx.inboundUid === tx.outboundUid) {
 			if (tx.outboundCurrency === selectedWallet) {
 				setOutGoingSwap(true);
@@ -140,7 +144,7 @@ const TableCell = ({ tx }) => {
 		if (tx.inboundCurrency === tx.outboundCurrency) {
 			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("btc"))
 		}
-		if ((tx.inboundCurrency === "EUR" || tx.outboundCurrency === "EUR") && tx.txType === "Internal") {
+		if ((tx.inboundCurrency === "EUR" || tx.outboundCurrency === "EUR") && tx.txType === "Internal" && tx.inboundUid === tx.outboundUid) {
 			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("btceur"))
 			setImageClass(cn("h-5 w-8"));
 		}
@@ -156,6 +160,16 @@ const TableCell = ({ tx }) => {
 		}
 
 		if ((tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD") && tx.txType === "External") {
+			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("usd"))
+			setImageClass(cn("h-8 w-8"));
+		}
+
+		if ((tx.inboundCurrency === "USD" || tx.outboundCurrency === "USD") && tx.txType === "Internal" && tx.inboundUid !== tx.outboundUid) {
+			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("usd"))
+			setImageClass(cn("h-8 w-8"));
+		}
+
+		if ((tx.inboundCurrency === "EUR" || tx.outboundCurrency === "EUR") && tx.txType === "Internal" && tx.inboundUid !== tx.outboundUid) {
 			setCurrencyIcon(UI.RESOURCES.getCurrencySymbol("usd"))
 			setImageClass(cn("h-8 w-8"));
 		}

@@ -3,7 +3,7 @@ import { MdClose, MdOutlineArrowDropDown, MdEast } from 'react-icons/md';
 import { VIEWS } from 'consts';
 import { setView } from 'contexts/modules/layout';
 import { storeDispatch } from 'contexts';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from 'hooks';
 import Img from 'react-cool-img';
 import { UI } from 'consts';
@@ -24,7 +24,7 @@ export const SendPayment = () => {
 	const [invoice, setInvoice] = useState("");
 	const [currency, setCurrency] = useState("");
 	const [isPaymentComplete, setIsPaymentComplete] = useState(false);
-	const [paymentObj, setPaymentObj] = useState({ amount: 0, currency: "BTC", rate: 1, paymentRequest: "" })
+	const [paymentObj, setPaymentObj] = useState({ amount: 0, currency: "BTC", rate: 1, paymentRequest: "", fees: 0 })
 	const [amount, setAmount] = useState(0);
 	const [balance, setBalance] = useState(0);
 	const [isPaying, setIsPaying] = useState(false);
@@ -33,16 +33,21 @@ export const SendPayment = () => {
 		if (!invoice) return
 		if (!currency) return
 		setIsPaying(true);
-		const res = await postRequest(API_NAMES.PAY, [], { paymentRequest: invoice, currency: currency });
-		setIsPaying(false);
-		if (res.success) {
-			setIsPaymentComplete(true)
-		} else {
-			displayToast('Payment Failed', {
-				type: 'error',
-				level: TOAST_LEVEL.CRITICAL,
-				toastId: 'copy-invoice',
-			});
+		try {
+			const res = await postRequest(API_NAMES.PAY, [], { paymentRequest: invoice, currency: currency });
+			setPaymentObj(res);
+			setIsPaying(false);
+			if (res.success) {
+				setIsPaymentComplete(true)
+			} else {
+				displayToast('Payment Failed', {
+					type: 'error',
+					level: TOAST_LEVEL.CRITICAL,
+					toastId: 'copy-invoice',
+				});
+			}
+		} catch (err) {
+			setIsPaying(false)
 		}
 	}
 
@@ -70,13 +75,16 @@ export const SendPayment = () => {
 			</div>
 			<div className="text-xl mt-8">Send Payment</div>
 			<div className="mt-2">
+				<div className="text-left mb-2 font-light">
+					Send From
+				</div>
 				<DropDown />
 			</div>
 			{
 				isPaying ? (
 					<div className="m-auto text-gray-500">
-					<Loader color={"gray"} />
-					Paying
+						<Loader color={"gray"} />
+						Paying
 					</div>
 				) : (
 					<div className="h-full w-full">
@@ -98,9 +106,12 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [fiatAmount, setFiatAmount] = useState(0);
 	const [nodeKey, setNodeKey] = useState("");
 	const [expiry, setExpiry] = useState(null);
+	const [maxFee, setMaxFee] = useState(0);
 	const [invoiceValid, setInvoiceValid] = useState(false);
 	const [quote, setQuote] = useState(1);
 	const [hasSufficienFunds, setHasSufficientFunds] = useState(true);
+	
+	const [bankInfo] = useAppSelector(state => [state.bank.info])
 
 	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
 
@@ -135,11 +146,21 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 
 	}, [amount, balance])
 
+	useEffect(() => {
+		console.log(bankInfo)
+		console.log(amount)
+		if (!bankInfo || !amount) return 
+		console.log("hello")
+		setMaxFee(amount * Number(bankInfo.lnNetworkMaxFee));
+	}, [amount, bankInfo])
+
 	return (
 		<div>
 			<div className="text-left mt-8">
 				<div className="">
-					Invoice
+					<div className="font-light">
+						Send To
+					</div>
 					<div className="border border-2 mt-1 rounded-md w-full">
 						<input
 							value={invoice}
@@ -152,7 +173,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 					</div>
 				</div>
 			</div>
-			<div className="grid grid-cols-2 mt-8 p-4 font-light">
+			<div className="grid grid-cols-2 gap-2 mt-8 p-4 font-light">
 				<div className="text-left w-full">Amount</div>
 				<div className="text-right w-full">
 					<div>
@@ -165,11 +186,23 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 					}
 				</div>
 
-				<div className="text-left w-full mt-2">NodeKey</div>
-				<div className="text-right w-full truncate ... mt-2">{nodeKey ? nodeKey : "-"} </div>
+				<div className="text-left w-full">Max Fee</div>
+				<div className="text-right w-full">
+					<div>
+						{maxFee} BTC
+					</div>
+					{
+						currency !== "BTC" && (
+							<div> {CURRENCY_SYMBOL_MAP[currency]} {fiatAmount}</div>
+						)
+					}
+				</div>
 
-				<div className="text-left w-full mt-2">Expiry</div>
-				<div className="text-right w-full truncate ... mt-2">{expiry ? getTime(expiry * 1000) : "-"} </div>
+				<div className="text-left w-full">NodeKey</div>
+				<div className="text-right w-full truncate ...">{nodeKey ? nodeKey : "-"} </div>
+
+				<div className="text-left w-full">Expiry</div>
+				<div className="text-right w-full truncate ...">{expiry ? getTime(expiry * 1000) : "-"} </div>
 			</div>
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				{
@@ -280,17 +313,24 @@ const Dropped = ({ onClickDropDown }) => {
 
 const PaymentComplete = ({ paymentObj }) => {
 	return (
-		<div className="flex flex-col h-full relative">
-			<div className="h-3/4 flex">
-				<div className="m-auto w-full">
+		<div className="flex flex-col h-full">
+			<div className="h-3/4 flex flex-col mt-24">
+				<div className="mx-auto w-full">
 					<div>Payment Send</div>
+				</div>
+				<div className="grid grid-cols-2 p-4">
+					<div className="text-left">LN Fees:</div>
+					<div className="text-right">{Number(paymentObj.fees)} sats</div>
+
+					<div className="text-left">Bank Fees:</div>
+					<div className="text-right">{Number(0)} sats</div>
 				</div>
 			</div>
 
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => storeDispatch(setView(VIEWS.OVERVIEW))}
-					className="border-gray-600 border-2 hover:opacity-80 cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Complete</p>
 				</button>
 			</div>

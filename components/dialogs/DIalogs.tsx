@@ -1,8 +1,6 @@
 import React, { ReactNode } from 'react';
 
 import { WrapBaseDialog } from 'components/dialogs/base';
-import { ContractInfoDialog } from 'components/dialogs/ContractInfo';
-import { QuantityTouchInputDialog } from 'components/dialogs/QuantityTouchInput';
 import { SettingsDialog } from 'components/dialogs/Settings';
 import { DIALOGS } from 'consts';
 import { setDialogClose } from 'contexts/modules/layout';
@@ -17,12 +15,6 @@ export const Dialogs = () => {
 		<>
 			<WrapBaseDialog isOpen={currentDialog === DIALOGS.SETTINGS} close={close}>
 				<SettingsDialog />
-			</WrapBaseDialog>
-			<WrapBaseDialog isOpen={currentDialog === DIALOGS.CONTRACT_INFO} close={close}>
-				<ContractInfoDialog />
-			</WrapBaseDialog>
-			<WrapBaseDialog isOpen={currentDialog === DIALOGS.QUANTITY_TOUCH_INPUT} close={close}>
-				<QuantityTouchInputDialog />
 			</WrapBaseDialog>
 		</>
 	);

@@ -91,7 +91,7 @@ const AccountListItem = (currency, wallet) => {
 	}
 
 	return (
-		<div className="w-full h-20 bg-gray-25 rounded-xl mt-3 text-left cursor-pointer" onClick={() => onSelectAccout()}>
+		<div className="w-full h-20 bg-gray-25 hover:bg-gray-50 rounded-xl mt-3 text-left cursor-pointer" onClick={() => onSelectAccout()}>
 			<div className="grid grid-cols-3 h-full text-black">
 				<div className="m-auto w-full">
 					<div className="grid grid-cols-2 w-full flex">

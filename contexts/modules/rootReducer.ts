@@ -13,6 +13,7 @@ import userReducers from './user';
 import paymentsReducers from './payments';
 import currencyReducers from './currency';
 import walletReducers from './wallet';
+import bankReducers from './bank';
 
 const rootReducer = combineReducers({
 	prices: pricesReducers,
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
 	payments: paymentsReducers,
 	currencies: currencyReducers,
 	wallets: walletReducers,
+	bank: bankReducers,
 });
 
 export default rootReducer;

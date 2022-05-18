@@ -151,7 +151,7 @@ const SwapForm = ({ onSwap }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => onClickSwap()}
-					className="border-gray-600 border-2 hover:opacity-80 cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Swap</p>
 				</button>
 			</div>
@@ -247,7 +247,7 @@ const SwapComplete = ({ swapObj }) => {
 					<Img src={imgUrl} className="w-32"/>
 				</div>
 				<div className="mt-4">Swap Complete</div>
-				<div className="m-auto w-5/6 h-24 border rounded-xl mt-4">
+				<div className="m-auto w-full h-24 border rounded-xl mt-4">
 					<div className="grid grid-cols-3 flex h-full">
 						<div className="m-auto flex flex-col">
 							<div>
@@ -276,7 +276,7 @@ const SwapComplete = ({ swapObj }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => storeDispatch(setView(VIEWS.OVERVIEW))}
-					className="border-gray-600 border-2 hover:opacity-80 cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Complete</p>
 				</button>
 			</div>

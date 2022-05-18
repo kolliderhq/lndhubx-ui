@@ -30,7 +30,7 @@ export const MainButtons = () => {
 						className="mx-2 px-4 py-2 rounded-3xl font-semibold uppercase tracking-wide"
 						onClick={() => dispatch(setView(VIEWS.CONVERT))}>
 						<div className="flex">
-							Convert <RiExchangeLine className="text-xl ml-2 m-auto" />
+							Swap <RiExchangeLine className="text-xl ml-2 m-auto" />
 						</div>
 					</button>
 				</div>

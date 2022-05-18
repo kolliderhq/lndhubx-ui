@@ -115,7 +115,7 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => onCreateInvoice(amount, memo)}
-					className="border-gray-600 border-2 hover:opacity-80 cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Create Invoice</p>
 				</button>
 			</div>

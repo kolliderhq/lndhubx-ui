@@ -23,7 +23,7 @@ export const Welcome = ({ }) => {
 					<div className="m-auto">
 						<Img src="/assets/logos/kollider_icon_black.png" className="w-12" />
 					</div>
-					<div className="mt-2 m-auto">Wallet</div>
+					<div className="mt-2 m-auto">Pay</div>
 				</div>
 				<div className="flex flex-col items-center">
 					<div className="mx-auto max-w-xxxs w-full px-4py-4">

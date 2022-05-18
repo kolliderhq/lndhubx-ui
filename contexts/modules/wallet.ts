@@ -11,12 +11,14 @@ export interface Wallets {
 	wallets: Record<string, Wallet>;
 	availableWallets: Array<string>;
 	selectedWallet: string;
+	txs: Array<Record<string, string>>;
 }
 
 const initialState: Wallets = {
 	wallets: {},
 	availableWallets: [],
 	selectedWallet: 'BTC',
+	txs: [],
 };
 
 export const walletSlice = createSlice({
@@ -41,8 +43,11 @@ export const walletSlice = createSlice({
 		setSelectedWallet: (state, action: PayloadAction<string>) => {
 			state.selectedWallet = action.payload;
 		},
+		setTxs: (state, action: PayloadAction<Array<Record<string, string>>>) => {
+			state.txs = action.payload;
+		},
 	},
 });
 
-export const { setWallets, setWallet, setWalletBalance, setAvailableWallets, setSelectedWallet } = walletSlice.actions;
+export const { setWallets, setWallet, setWalletBalance, setAvailableWallets, setSelectedWallet, setTxs } = walletSlice.actions;
 export default walletSlice.reducer;

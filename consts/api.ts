@@ -126,6 +126,13 @@ const API: I_API = {
 				},
 			},
 		},
+		WHOAMI: {
+			route: () => `/whoami`,
+			method: 'get',
+			base: END_POINTS.BACK,
+			stale: API_TIME.LONGER,
+			allowNull: true,
+		},
 		AVAILABLE_CURRENCIES: {
 			route: () => `/getavailablecurrencies`,
 			method: 'get',
@@ -195,144 +202,25 @@ const API: I_API = {
 			},
 		},
 		TXS: {
-			route: (currency, from, to) =>
-				`/gettxs?currency=${currency}`,
+			route: (currency, from, to) => {
+				if (currency) {
+					return `/gettxs?currency=${currency}`
+				} else {
+					return `/gettxs`
+				}
+			},
 			method: 'get',
 			base: END_POINTS.BACK,
 			stale: API_TIME.SHORTEST,
 			allowNull: true,
-		}
-		// WHOAMI: {
-		// 	route: () => `/auth/whoami`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.NONE,
-		// },
-		// PRODUCTS: {
-		// 	route: () => `/market/products`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.NONE,
-		// },
-		// WALLET_DEPOSIT: {
-		// 	route: () => `/wallet/deposit`,
-		// 	method: 'post',
-		// 	createBody: params => ({ ...params }),
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.NONE,
-		// 	customOptions: {
-		// 		...postOptions,
-		// 	},
-		// },
-		// HISTORICAL_OHLC: {
-		// 	route: (symbol, intervalSize, start, end) =>
-		// 		`/market/historical_ohlc?symbol=${symbol}&interval_size=${intervalSize}${applyOptionalParams(
-		// 			{ start, end },
-		// 			false
-		// 		)}`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.HOUR,
-		// },
-		// REFRESH_JWT: {
-		// 	route: () => `/auth/refresh_token`,
-		// 	method: 'post',
-		// 	createBody: params => ({ ...params }),
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.NONE,
-		// 	customOptions: {
-		// 		...postOptions,
-		// 	},
-		// },
-		// HISTORICAL_INDEX_PRICES: {
-		// 	route: (symbol, intervalSize, start, end) =>
-		// 		`/market/historic_index_prices?symbol=${symbol}&interval_size=${intervalSize}&start=${start}&end=${end}`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.NONE,
-		// 	allowNull: true,
-		// },
-		// USER_ACCOUNT: {
-		// 	route: () => `/user/account`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.NONE,
-		// },
-		// MULTI_USER_DATA: {
-		// 	route: () => `/users`,
-		// 	method: 'post',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.NONE,
-		// 	createBody: params => ({ ...params }),
-		// 	customOptions: {
-		// 		dedupingInterval: 0,
-		// 		revalidateOnFocus: false,
-		// 		revalidateOnMount: true,
-		// 	},
-		// },
-		// TRADE_LEADERBOARD: {
-		// 	route: (symbol, start, end) => `/market/trade_leaderboard?${applyOptionalParams({ symbol, start, end }, true)}`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.LONGER,
-		// },
-		// HISTORICAL_MARK_PRICES: {
-		// 	route: (symbol, intervalSize, start, end) =>
-		// 		`/market/historical_mark_price?symbol=${symbol}&interval_size=${intervalSize}&start=${start}&end=${end}`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.HOUR,
-		// 	allowNull: true,
-		// },
-		// HISTORIC_ASSET_VALUES: {
-		// 	route: (start, end, granularity, symbol) =>
-		// 		`/user/historic_asset_values?${applyOptionalParams({ start, end, symbol, interval_size: granularity }, true)}`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.ONE_TIME,
-		// 	allowNull: true,
-		// },
-		// GET_ORDERS: {
-		// 	route: (symbol, start, end, limit) =>
-		// 		`/orders?${applyOptionalParams({ start, end, symbol, limit}, true)}`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.ONE_TIME,
-		// 	allowNull: true,
-		// },
-		// HISTORICAL_TRADES: {
-		// 	route: (symbol, start, end, limit) =>
-		// 		`/user/trades?${applyOptionalParams({ start, end, symbol, limit: 100}, true)}`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.SHORTEST,
-		// 	allowNull: true,
-		// },
-		// TRADE_SUMMARY: {
-		// 	route: () => `/user/trade_summary`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.NONE,
-		// 	customOptions: {
-		// 		dedupingInterval: 10,
-		// 		initialSize: 1,
-		// 		revalidateAll: false,
-		// 		persistSize: false,
-		// 	},
-		// },
-		// CHECK_VERSION: {
-		// 	route: () => `/version`,
-		// 	method: 'get',
-		// 	base: END_POINTS.SERVERLESS,
-		// 	stale: API_TIME.LONG,
-		// 	simple: true, //  just to display that this does not have a refiner
-		// },
-		// AUTH_LNURL: {
-		// 	route: () => `/auth/lnurl_auth`,
-		// 	method: 'get',
-		// 	base: END_POINTS.BACK,
-		// 	stale: API_TIME.ONE_TIME,
-		// },
+		},
+		BANK_INFO: {
+			route: () => `/nodeinfo`,
+			method: 'get',
+			base: END_POINTS.BACK,
+			stale: API_TIME.SHORT,
+			allowNull: true,
+		},
 	},
 };
 deepFreeze(API);

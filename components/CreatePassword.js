@@ -92,7 +92,7 @@ export const CreatePassword = () => {
 							<button
 								disabled={!isPasswordValid}
 								onClick={() => onCreate()}
-								className={cn("border-gray-600 border-2 hover:opacity-80 cursor-pointer border rounded-lg w-2/3 px-5 py-2", !isPasswordValid ? 'disabled:opacity-75' : 'border-green-500 text-green-500')}>
+								className={cn("border-gray-600 border-2 hover:bg-green-500 hover:text-white cursor-pointer border rounded-lg w-2/3 px-5 py-2", !isPasswordValid ? 'disabled:opacity-75 hover:bg-white hover:text-gray-600' : 'border-green-500 text-green-500')}>
 								<p>Create Account</p>
 							</button>
 						</div>

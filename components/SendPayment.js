@@ -107,6 +107,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [nodeKey, setNodeKey] = useState("");
 	const [expiry, setExpiry] = useState(null);
 	const [maxFee, setMaxFee] = useState(0);
+	const [maxFeeFiat, setMaxFeeFiat] = useState(0);
 	const [invoiceValid, setInvoiceValid] = useState(false);
 	const [quote, setQuote] = useState(1);
 	const [hasSufficienFunds, setHasSufficientFunds] = useState(true);
@@ -152,6 +153,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		if (!bankInfo || !amount) return 
 		console.log("hello")
 		setMaxFee(amount * Number(bankInfo.lnNetworkMaxFee));
+		setMaxFeeFiat(fiatAmount * Number(bankInfo.lnNetworkMaxFee));
 	}, [amount, bankInfo])
 
 	return (
@@ -189,11 +191,11 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 				<div className="text-left w-full">Max Fee</div>
 				<div className="text-right w-full">
 					<div>
-						{maxFee} BTC
+						{roundDecimal(maxFee, 8)} BTC
 					</div>
 					{
 						currency !== "BTC" && (
-							<div> {CURRENCY_SYMBOL_MAP[currency]} {fiatAmount}</div>
+							<div> {CURRENCY_SYMBOL_MAP[currency]} {roundDecimal(maxFeeFiat, 8)}</div>
 						)
 					}
 				</div>

@@ -40,7 +40,8 @@ export const SendPayment = () => {
 			if (res.success) {
 				setIsPaymentComplete(true)
 			} else {
-				displayToast('Payment Failed', {
+				let text = `Payment Failed: ${res.error}`
+				displayToast(text, {
 					type: 'error',
 					level: TOAST_LEVEL.CRITICAL,
 					toastId: 'copy-invoice',
@@ -58,9 +59,11 @@ export const SendPayment = () => {
 
 	useEffect(() => {
 		if (!selectedWallet || !wallets) return
-		setBalance(wallets[selectedWallet].balance)
+		console.log(selectedWallet)
+		console.log(wallets);
+		setBalance(wallets[selectedWallet] ? wallets[selectedWallet].balance : 0)
 
-	}, [wallets])
+	}, [wallets, selectedWallet])
 
 	return (
 		<div className="flex flex-col h-full p-8 relative text-black">
@@ -107,11 +110,12 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [nodeKey, setNodeKey] = useState("");
 	const [expiry, setExpiry] = useState(null);
 	const [maxFee, setMaxFee] = useState(0);
+	const [maxAmountSend, setMaxAmountSend] = useState(0);
 	const [maxFeeFiat, setMaxFeeFiat] = useState(0);
 	const [invoiceValid, setInvoiceValid] = useState(false);
 	const [quote, setQuote] = useState(1);
 	const [hasSufficienFunds, setHasSufficientFunds] = useState(true);
-	
+
 	const [bankInfo] = useAppSelector(state => [state.bank.info])
 
 	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
@@ -134,6 +138,11 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		if (!newQuote) return
 		setQuote(newQuote);
 		setFiatAmount(roundDecimal(amount / Number(newQuote.rate), 8))
+		if (currency !== "BTC") {
+			setMaxAmountSend(roundDecimal(balance * Number(quote.rate), 8))
+		} else {
+			setMaxAmountSend(roundDecimal(balance, 8))
+		}
 	}, [newQuote])
 
 	useEffect(() => {
@@ -150,8 +159,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	useEffect(() => {
 		console.log(bankInfo)
 		console.log(amount)
-		if (!bankInfo || !amount) return 
-		console.log("hello")
+		if (!bankInfo || !amount) return
 		setMaxFee(amount * Number(bankInfo.lnNetworkMaxFee));
 		setMaxFeeFiat(fiatAmount * Number(bankInfo.lnNetworkMaxFee));
 	}, [amount, bankInfo])
@@ -173,9 +181,10 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 							className="input-default inline-block w-full border rounded-md border-transparent h-14"
 						/>
 					</div>
+					<div className="mt-2 px-2">Max Amount to send: {maxAmountSend} BTC</div>
 				</div>
 			</div>
-			<div className="grid grid-cols-2 gap-2 mt-8 p-4 font-light">
+			<div className="grid grid-cols-2 gap-2 mt-2 p-4 font-light">
 				<div className="text-left w-full">Amount</div>
 				<div className="text-right w-full">
 					<div>

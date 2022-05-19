@@ -126,6 +126,22 @@ const API: I_API = {
 				},
 			},
 		},
+		PRESIGNUP: {
+			route: () => `/presignup`,
+			method: 'post',
+			base: END_POINTS.BACK,
+			stale: API_TIME.NONE,
+			createBody: params => ({
+				email: params.email,
+			}),
+			customOptions: {
+				...postOptions,
+				dedupingInterval: 0,
+				onError: (error, key, config) => {
+					return error;
+				},
+			},
+		},
 		WHOAMI: {
 			route: () => `/whoami`,
 			method: 'get',

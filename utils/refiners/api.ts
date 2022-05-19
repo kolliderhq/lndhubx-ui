@@ -105,6 +105,11 @@ refiner.set(API_NAMES.BANK_INFO, data => {
 	return camelCaseAllKeys(data);
 });
 
+refiner.set(API_NAMES.PRESIGNUP, data => {
+	console.log({data: camelCaseAllKeys(data)})
+	return camelCaseAllKeys(data);
+});
+
 export const apiRefiner = (name, data) => {
 	let refinerFunc = null;
 	if (refiner.has(name)) {

@@ -33,7 +33,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 					description="Synthetic stablecoins."
 					canonical={'trade.kollider.xyz'}
 					twitter={{
-						handle: '@zonic',
+						handle: '@kollider',
 						// site: '@site',
 						cardType: 'summary_large_image',
 					}}

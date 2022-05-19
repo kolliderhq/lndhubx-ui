@@ -4,7 +4,7 @@
 	"scripts": {
 		"dev": "cross-env NEXT_PUBLIC_BACK_ENV=dev NEXT_PUBLIC_DEBUG_MODE=1 PORT=3000 next dev",
 		"dev:umbrel": "cross-env NEXT_PUBLIC_BACK_ENV=dev NEXT_PUBLIC_UMBREL=1 NEXT_PUBLIC_DEBUG_MODE=1 PORT=3000 next dev",
-		"build": "cross-env NEXT_PUBLIC_BACK_ENV=production next build",
+		"build": "cross-env NEXT_PUBLIC_BACK_ENV=production IS_LANDING=1 next build",
 		"build:umbrel": "cross-env NEXT_PUBLIC_BACK_ENV=production NEXT_PUBLIC_UMBREL=1 next build",
 		"build:dev": "cross-env NEXT_PUBLIC_BACK_ENV=dev next build",
 		"prettify": "prettier --write './**/*.{js,jsx,ts,tsx,scss,md,json}' --config ./.prettierrc",

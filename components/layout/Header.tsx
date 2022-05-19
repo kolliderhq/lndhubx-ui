@@ -18,17 +18,17 @@ export const Header = () => {
 		<div className="flex items-center justify-between w-full h-14 pb text-gray-800">
 			<figure className="w-full flex items-center justify-start relative">
 				{/* <img className="w-30 h-[50px] xs:w-30 xs:h-8" src="/assets/logos/zonic-icon.png" /> */}
-				<div className="text-2xl px-2"><Img src="/assets/logos/kollider_logo_black.png" className="w-32"/></div><div className="mb-4 text-sm font-bold">Pay</div>
+				<div className="text-2xl px-2"><Img src="/assets/logos/kollider_logo_black.png" className="w-32"/></div><div className="mb-4 text-sm font-bold">Wallet</div>
 			</figure>
 			<div className="col-span-2 w-full flex items-center justify-end gap-3 xxs:gap-4">
 				<div className="flex h-full border-r border-gray-800">
-					<button
+					{/* <button
 						className="m-auto mr-3 transition ease-in-out hover:-translate-y-1 hover:scale-110"
 						onClick={() => {
 							dispatch(setView(VIEWS.INFO));
 						}}>
 						About
-					</button>
+					</button> */}
 				</div>
 				{isLoggedIn && (
 					<button

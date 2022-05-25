@@ -19,31 +19,33 @@ import { googleTranslateException } from 'utils/misc';
 function MyApp({ Component, pageProps }: AppProps) {
 	const init = React.useMemo(() => <DataInit />, []);
 	return (
-		<Provider store={reduxStore}>
-			<SWRConfig
-				value={{
-					refreshInterval: 0,
-					fetcher: fetcher,
-					// shouldRetryOnError: false,
-					// onErrorRetry: false,
-					onErrorRetry: defaultOnErrorRetry,
-				}}>
-				<DefaultSeo
-					title="Kollider Wallet"
-					description="Synthetic stablecoins."
-					canonical={'trade.kollider.xyz'}
-					twitter={{
-						handle: '@kollider',
-						// site: '@site',
-						cardType: 'summary_large_image',
-					}}
-				/>
-				{init}
-				<PageWrapper>
-					<Component {...pageProps} />
-				</PageWrapper>
-			</SWRConfig>
-		</Provider>
+		<PlausibleProvider domain="pay.kollider.xyz">
+			<Provider store={reduxStore}>
+				<SWRConfig
+					value={{
+						refreshInterval: 0,
+						fetcher: fetcher,
+						// shouldRetryOnError: false,
+						// onErrorRetry: false,
+						onErrorRetry: defaultOnErrorRetry,
+					}}>
+					<DefaultSeo
+						title="Kollider Wallet"
+						description="Synthetic stablecoins."
+						canonical={'trade.kollider.xyz'}
+						twitter={{
+							handle: '@kollider',
+							// site: '@site',
+							cardType: 'summary_large_image',
+						}}
+					/>
+					{init}
+					<PageWrapper>
+						<Component {...pageProps} />
+					</PageWrapper>
+				</SWRConfig>
+			</Provider>
+		</PlausibleProvider>
 	);
 }
 

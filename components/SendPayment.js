@@ -41,7 +41,7 @@ export const SendPayment = () => {
 				setIsPaymentComplete(true)
 			} else {
 				let text = `Payment Failed: ${res.error}`
-				displayToast(text, {
+				displayToast(texnt, {
 					type: 'error',
 					level: TOAST_LEVEL.CRITICAL,
 					toastId: 'copy-invoice',

@@ -24,8 +24,15 @@ export const Receive = () => {
 		amount = amount.toString()
 		let currency = selectedWallet ? selectedWallet : "BTC";
 		const data = await getRequest(API_NAMES.ADD_INVOICE, [amount, currency, memo])
-		console.log(data);
-		setInvoice(data.paymentRequest)
+		if (data.error) {
+			displayToast(`${data.error}`, {
+				type: 'error',
+				level: TOAST_LEVEL.CRITICAL,
+				toastId: 'copy-invoice',
+			});
+		} else {
+			setInvoice(data.paymentRequest)
+		}
 	}
 
 	const resetInovice = () => {

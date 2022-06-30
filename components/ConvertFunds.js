@@ -15,6 +15,7 @@ import Loader from './Loader';
 import { useAppSelector } from 'hooks';
 import { CURRENCY_SYMBOL_MAP } from 'consts/misc/currency';
 import { roundDecimal } from 'utils/format';
+import { TOAST_LEVEL, displayToast } from 'utils/toast';
 
 export const ConvertFunds = () => {
 
@@ -23,7 +24,7 @@ export const ConvertFunds = () => {
 
 	const onSwap = async ({ fromCurrency, fromAmount, toCurrency, toAmount }) => {
 
-		const res = await postRequest(API_NAMES.SWAP, [], { fromCurrency: fromCurrency, toCurrency: toCurrency, amount: fromAmount});
+		const res = await postRequest(API_NAMES.SWAP, [], { fromCurrency: fromCurrency, toCurrency: toCurrency, amount: fromAmount });
 
 		setSwapObj({
 			fromCurrency: fromCurrency,
@@ -34,6 +35,11 @@ export const ConvertFunds = () => {
 
 		if (res.success) {
 			setisSwapComplete(true)
+		} else {
+			displayToast(<p>{`Swap Failed! Reason: ${res.error}`}</p>, {
+				type: 'error',
+				level: TOAST_LEVEL.CRITICAL,
+			});
 		}
 	}
 
@@ -70,14 +76,14 @@ const SwapForm = ({ onSwap }) => {
 	const [lastQuote, setLastQuote] = useState(0);
 
 
-	const { data: quote} = useSWR(fromAmount !== 0 && fromCurrency !== toCurrency ? [API_NAMES.QUOTE, fromCurrency, toCurrency, fromAmount]: null);
+	const { data: quote } = useSWR(fromAmount !== 0 && fromCurrency !== toCurrency ? [API_NAMES.QUOTE, fromCurrency, toCurrency, fromAmount] : null);
 
 	const [fromBalance, setFromBalance] = useState(0);
 
 	const [wallets, availableWallets] = useAppSelector(state => [state.wallets.wallets, state.wallets.availableWallets]);
 
 	useMemo(() => {
-		if (!quote) return 
+		if (!quote) return
 		console.log(quote)
 		setLastQuote(Number(quote.rate))
 	}, [quote])
@@ -103,7 +109,7 @@ const SwapForm = ({ onSwap }) => {
 	}, [wallets, fromCurrency])
 
 	const onClickSwap = () => {
-		onSwap({fromCurrency: fromCurrency, toCurrency: toCurrency, fromAmount: fromAmount, toAmount: toAmount})
+		onSwap({ fromCurrency: fromCurrency, toCurrency: toCurrency, fromAmount: fromAmount, toAmount: toAmount })
 	}
 
 	return (
@@ -233,10 +239,10 @@ const Dropped = ({ setCurrency, onClickDropDown, availableCurrencies }) => {
 const SwapComplete = ({ swapObj }) => {
 	const [imgUrl, setImgUrl] = useState("");
 	useMemo(() => {
-		if (swapObj.fromCurrency === "EUR" ||  swapObj.toCurrency === "EUR") {
+		if (swapObj.fromCurrency === "EUR" || swapObj.toCurrency === "EUR") {
 			setImgUrl("/assets/currency-icons/btceur.png");
 		}
-		if (swapObj.fromCurrency === "USD" ||  swapObj.toCurrency === "USD") {
+		if (swapObj.fromCurrency === "USD" || swapObj.toCurrency === "USD") {
 			setImgUrl("/assets/currency-icons/btcusd.png");
 		}
 	}, [swapObj])
@@ -244,7 +250,7 @@ const SwapComplete = ({ swapObj }) => {
 		<div className="flex flex-col h-full relative">
 			<div className="mt-24 flex flex-col w-full">
 				<div className="m-auto">
-					<Img src={imgUrl} className="w-32"/>
+					<Img src={imgUrl} className="w-32" />
 				</div>
 				<div className="mt-4">Swap Complete</div>
 				<div className="m-auto w-full h-24 border rounded-xl mt-4">

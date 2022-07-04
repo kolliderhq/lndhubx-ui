@@ -218,7 +218,7 @@ const API: I_API = {
 			},
 		},
 		TXS: {
-			route: (currency, from, to) => {
+			route: (currency) => {
 				if (currency) {
 					return `/gettxs?currency=${currency}`
 				} else {

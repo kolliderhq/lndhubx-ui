@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useEffect, useMemo } from 'react';
+import Img from 'react-cool-img';
 
 import empty from 'is-empty';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 
-import { API_NAMES } from 'consts';
+import { API_NAMES, VIEWS } from 'consts';
+import { UI } from 'consts';
 import { setMeta, setTxs, setWallet, setWallets, storeDispatch } from 'contexts';
 import { setAvailableWallets } from 'contexts';
+import bank, { setBankInfo } from 'contexts/modules/bank';
 import useAutoLogout from 'hooks/init/useAutoLogout';
 import { useCheckIpLocation } from 'hooks/init/useCheckIpLocation';
 import useGetMiscData from 'hooks/init/useGetMiscData';
@@ -17,15 +20,23 @@ import { useWebln } from 'hooks/init/useWebln';
 import { useAppSelector } from 'hooks/redux';
 import { useStatusChecker } from 'hooks/useStatusChecker';
 import { getSWROptions } from 'utils/fetchers';
-import bank, { setBankInfo } from 'contexts/modules/bank';
+import { TOAST_LEVEL, displayToast } from 'utils/toast';
+import { fixed } from 'utils/Big';
+import { useAppDispatch } from 'hooks/redux';
+import { setView } from 'contexts/modules/layout';
 
 export const DataInit = () => {
 	const [loaded, setLoaded] = React.useState(false);
-	const [isLoggedIn, wallets] = useAppSelector(state => [
+	const [isLoggedIn, wallets, meta] = useAppSelector(state => [
 		state.connection.isLoggedIn,
 		state.wallets.wallets,
+		state.user.meta,
 		// state.wallets.txs,
 	]);
+
+	let dispatch = useAppDispatch();
+	const [txs, setTxs] = useState([]);
+	const [txsFirstLoaded, setTxsFirstLoaded] = useState(true);
 	React.useEffect(() => {
 		setLoaded(true);
 	}, []);
@@ -39,8 +50,57 @@ export const DataInit = () => {
 	);
 	const { data: userWallets } = useSWR(isLoggedIn ? [API_NAMES.BALANCES] : null, getSWROptions(API_NAMES.BALANCES));
 	// const { data: newTxs } = useSWR(isLoggedIn ? [API_NAMES.TXS] : []);
-	const { data: whoAmI} = useSWR(isLoggedIn ? [API_NAMES.WHOAMI] : null);
-	const { data: bankInfo} = useSWR(isLoggedIn ? [API_NAMES.BANK_INFO] : null);
+	const { data: whoAmI } = useSWR(isLoggedIn ? [API_NAMES.WHOAMI] : null);
+	const { data: bankInfo } = useSWR(isLoggedIn ? [API_NAMES.BANK_INFO] : null);
+
+	const { data: newTxs } = useSWR(isLoggedIn ? [API_NAMES.TXS, null] : null, getSWROptions(API_NAMES.TXS));
+
+	useEffect(() => {
+		if (!newTxs) return;
+		if (txsFirstLoaded) {
+			setTxs(newTxs);
+			setTxsFirstLoaded(false);
+		} else {
+			if (newTxs.length > txs.length) {
+				let diff = newTxs.length - txs.length;
+				for (let i = diff; i > 0; i--) {
+					let tx = newTxs[newTxs.length - i];
+					if (tx.txType === 'External' && tx.inboundUid === meta.uid) {
+						displayToast(
+							<div className="flex flex-row">
+								<div className="">
+									<Img src={UI.RESOURCES.getCurrencySymbol(tx.inboundCurrency.toLowerCase())} className="h-6 w-6" />
+								</div>
+								<p>{`Received ${tx.inboundAmount} ${tx.inboundCurrency} deposit! 💸`}</p>
+							</div>,
+							{
+								type: 'success',
+								level: TOAST_LEVEL.CRITICAL,
+							}
+						);
+						dispatch(setView(VIEWS.OVERVIEW))
+					}
+
+					if (tx.txType === 'External' && tx.outboundUid === meta.uid) {
+						displayToast(
+							<div className="flex flex-row">
+								<div className="">
+									<Img src={UI.RESOURCES.getCurrencySymbol(tx.inboundCurrency.toLowerCase())} className="h-6 w-6" />
+								</div>
+								<p>{`Send ${fixed(tx.outboundAmount, 8)} ${tx.inboundCurrency} successfully! 💸`}</p>
+							</div>,
+							{
+								type: 'success',
+								level: TOAST_LEVEL.CRITICAL,
+							}
+						);
+						dispatch(setView(VIEWS.OVERVIEW))
+					}
+				}
+				setTxs(newTxs);
+			}
+		}
+	}, [newTxs]);
 
 	useEffect(() => {
 		if (availableCurrencies) {
@@ -56,14 +116,14 @@ export const DataInit = () => {
 
 	useEffect(() => {
 		if (whoAmI) {
-			console.log(whoAmI)
+			console.log(whoAmI);
 			storeDispatch(setMeta(whoAmI));
 		}
 	}, [whoAmI]);
 
 	useEffect(() => {
 		if (bankInfo) {
-			console.log(bankInfo)
+			console.log(bankInfo);
 			storeDispatch(setBankInfo(bankInfo));
 		}
 	}, [bankInfo]);

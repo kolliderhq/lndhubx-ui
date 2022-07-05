@@ -27,16 +27,12 @@ import { setView } from 'contexts/modules/layout';
 
 export const DataInit = () => {
 	const [loaded, setLoaded] = React.useState(false);
-	const [isLoggedIn, wallets, meta] = useAppSelector(state => [
+	const [isLoggedIn, wallets] = useAppSelector(state => [
 		state.connection.isLoggedIn,
 		state.wallets.wallets,
-		state.user.meta,
 		// state.wallets.txs,
 	]);
 
-	let dispatch = useAppDispatch();
-	const [txs, setTxs] = useState([]);
-	const [txsFirstLoaded, setTxsFirstLoaded] = useState(true);
 	React.useEffect(() => {
 		setLoaded(true);
 	}, []);
@@ -52,55 +48,6 @@ export const DataInit = () => {
 	// const { data: newTxs } = useSWR(isLoggedIn ? [API_NAMES.TXS] : []);
 	const { data: whoAmI } = useSWR(isLoggedIn ? [API_NAMES.WHOAMI] : null);
 	const { data: bankInfo } = useSWR(isLoggedIn ? [API_NAMES.BANK_INFO] : null);
-
-	const { data: newTxs } = useSWR(isLoggedIn ? [API_NAMES.TXS, null] : null, getSWROptions(API_NAMES.TXS));
-
-	useEffect(() => {
-		if (!newTxs) return;
-		if (txsFirstLoaded) {
-			setTxs(newTxs);
-			setTxsFirstLoaded(false);
-		} else {
-			if (newTxs.length > txs.length) {
-				let diff = newTxs.length - txs.length;
-				for (let i = diff; i > 0; i--) {
-					let tx = newTxs[newTxs.length - i];
-					if (tx.txType === 'External' && tx.inboundUid === meta.uid) {
-						displayToast(
-							<div className="flex flex-row">
-								<div className="">
-									<Img src={UI.RESOURCES.getCurrencySymbol(tx.inboundCurrency.toLowerCase())} className="h-6 w-6" />
-								</div>
-								<p>{`Received ${tx.inboundAmount} ${tx.inboundCurrency} deposit! 💸`}</p>
-							</div>,
-							{
-								type: 'success',
-								level: TOAST_LEVEL.CRITICAL,
-							}
-						);
-						dispatch(setView(VIEWS.OVERVIEW))
-					}
-
-					if (tx.txType === 'External' && tx.outboundUid === meta.uid) {
-						displayToast(
-							<div className="flex flex-row">
-								<div className="">
-									<Img src={UI.RESOURCES.getCurrencySymbol(tx.inboundCurrency.toLowerCase())} className="h-6 w-6" />
-								</div>
-								<p>{`Send ${fixed(tx.outboundAmount, 8)} ${tx.inboundCurrency} successfully! 💸`}</p>
-							</div>,
-							{
-								type: 'success',
-								level: TOAST_LEVEL.CRITICAL,
-							}
-						);
-						dispatch(setView(VIEWS.OVERVIEW))
-					}
-				}
-				setTxs(newTxs);
-			}
-		}
-	}, [newTxs]);
 
 	useEffect(() => {
 		if (availableCurrencies) {

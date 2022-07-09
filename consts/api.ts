@@ -237,6 +237,13 @@ const API: I_API = {
 			stale: API_TIME.SHORT,
 			allowNull: true,
 		},
+		CREATE_LNURL_WITHDRAWAL: {
+			route: (amount, currency) => `/lnurl_withdrawal/create?currency=${currency}&amount=${amount}`,
+			method: 'get',
+			base: END_POINTS.BACK,
+			stale: API_TIME.ONE_TIME,
+			allowNull: true,
+		}
 	},
 };
 deepFreeze(API);

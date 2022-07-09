@@ -16,6 +16,8 @@ import useSWR from 'swr';
 import { CURRENCY_SYMBOL_MAP } from 'consts/misc/currency';
 import { displayToast, TOAST_LEVEL } from 'utils/toast';
 import Loader from './Loader';
+import { getRequest } from 'utils/api';
+import { QrCode } from './QrCode';
 
 export const SendPayment = () => {
 
@@ -116,9 +118,32 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [quote, setQuote] = useState(1);
 	const [hasSufficienFunds, setHasSufficientFunds] = useState(true);
 
-	const [bankInfo] = useAppSelector(state => [state.bank.info])
+	const [isLnurlWithdrawal, setIsLnurlWithdrawal] = useState(true);
+	const [lnurlWithdrawalAmount, setLnurlWithdrawalAmount] = useState(0);
+	const [lnurlWithdrawal, setLnurlWithdrawal] = useState("");
+
+	const [bankInfo, selectedWallet] = useAppSelector(state => [state.bank.info, state.wallets.selectedWallet])
 
 	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
+
+
+	const onCreateLnurlWithdrawal = async (amount) => {
+		console.log("Button pressed")
+		amount = lnurlWithdrawalAmount.toString()
+		let currency = selectedWallet ? selectedWallet : "BTC";
+		const data = await getRequest(API_NAMES.CREATE_LNURL_WITHDRAWAL, [amount, currency])
+		console.log(data);
+		if (data.error) {
+			displayToast(`${data.error}`, {
+				type: 'error',
+				level: TOAST_LEVEL.CRITICAL,
+				toastId: 'copy-invoice',
+			});
+		} else {
+			console.log(data.lnurl)
+			setLnurlWithdrawal(data.lnurl)
+		}
+	}
 
 	useEffect(() => {
 		if (!invoice) return
@@ -166,64 +191,120 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 
 	return (
 		<div>
-			<div className="text-left mt-8">
-				<div className="">
-					<div className="font-light">
-						Send To
-					</div>
-					<div className="border border-2 mt-1 rounded-md w-full">
-						<input
-							value={invoice}
-							onInput={e => setInvoice(e.target.value)}
-							placeholder="Paste you invoice here."
-							type="text"
-							style={{ textAlign: 'left' }}
-							className="input-default inline-block w-full border rounded-md border-transparent h-14"
-						/>
-					</div>
-					<div className="mt-2 px-2">Max Amount to send: {maxAmountSend} BTC</div>
-				</div>
-			</div>
-			<div className="grid grid-cols-2 gap-2 mt-2 p-4 font-light">
-				<div className="text-left w-full">Amount</div>
-				<div className="text-right w-full">
+			{
+				isLnurlWithdrawal ? (
 					<div>
-						{amount} BTC
+						<div className="text-left mt-8">
+							<div className="">
+								{
+									lnurlWithdrawal ? (
+										<div className="flex w-full">
+											<div className="m-auto">
+												<QrCode value={lnurlWithdrawal} wrapperClass={"border-radius: 32px"} size={256} imageSettings={{ src: UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase()), x: null, y: null, height: 48, width: 48, excavate: true }} />
+											</div>
+										</div>
+									) : (
+										<div>
+											<div className="font-light">
+												Amount you want to send
+											</div>
+											<div className="border border-2 mt-1 rounded-md w-full">
+												<input
+													value={lnurlWithdrawalAmount}
+													onInput={e => setLnurlWithdrawalAmount(e.target.value)}
+													placeholder="Amount you want to send."
+													type="number"
+													style={{ textAlign: 'left' }}
+													className="input-default inline-block w-full border rounded-md border-transparent h-14"
+												/>
+											</div>
+											<div className="border rounded-md px-2 py-1 w-12 mt-2">Max</div>
+										</div>
+									)
+								}
+							</div>
+						</div>
 					</div>
-					{
-						currency !== "BTC" && (
-							<div> {CURRENCY_SYMBOL_MAP[currency]} {fiatAmount}</div>
-						)
-					}
-				</div>
-
-				<div className="text-left w-full">Max Fee</div>
-				<div className="text-right w-full">
+				) : (
 					<div>
-						{roundDecimal(maxFee, 8)} BTC
+						<div className="text-left mt-8">
+							<div className="">
+								<div className="font-light">
+									Send To
+								</div>
+								<div className="border border-2 mt-1 rounded-md w-full">
+									<input
+										value={invoice}
+										onInput={e => setInvoice(e.target.value)}
+										placeholder="Paste you invoice here."
+										type="text"
+										style={{ textAlign: 'left' }}
+										className="input-default inline-block w-full border rounded-md border-transparent h-14"
+									/>
+								</div>
+								<div className="border border-2 mt-1 rounded-md w-full">
+									<input
+										value={invoice}
+										onInput={e => setInvoice(e.target.value)}
+										placeholder="Paste you invoice here."
+										type="text"
+										style={{ textAlign: 'left' }}
+										className="input-default inline-block w-full border rounded-md border-transparent h-14"
+									/>
+								</div>
+								<div className="mt-2 px-2">Max Amount to send: {maxAmountSend} BTC</div>
+							</div>
+						</div>
+						<div className="grid grid-cols-2 gap-2 mt-2 p-4 font-light">
+							<div className="text-left w-full">Amount</div>
+							<div className="text-right w-full">
+								<div>
+									{amount} BTC
+								</div>
+								{
+									currency !== "BTC" && (
+										<div> {CURRENCY_SYMBOL_MAP[currency]} {fiatAmount}</div>
+									)
+								}
+							</div>
+
+							<div className="text-left w-full">Max Fee</div>
+							<div className="text-right w-full">
+								<div>
+									{roundDecimal(maxFee, 8)} BTC
+								</div>
+								{
+									currency !== "BTC" && (
+										<div> {CURRENCY_SYMBOL_MAP[currency]} {roundDecimal(maxFeeFiat, 8)}</div>
+									)
+								}
+							</div>
+
+							<div className="text-left w-full">NodeKey</div>
+							<div className="text-right w-full truncate ...">{nodeKey ? nodeKey : "-"} </div>
+
+							<div className="text-left w-full">Expiry</div>
+							<div className="text-right w-full truncate ...">{expiry ? getTime(expiry * 1000) : "-"} </div>
+						</div>
 					</div>
-					{
-						currency !== "BTC" && (
-							<div> {CURRENCY_SYMBOL_MAP[currency]} {roundDecimal(maxFeeFiat, 8)}</div>
-						)
-					}
-				</div>
-
-				<div className="text-left w-full">NodeKey</div>
-				<div className="text-right w-full truncate ...">{nodeKey ? nodeKey : "-"} </div>
-
-				<div className="text-left w-full">Expiry</div>
-				<div className="text-right w-full truncate ...">{expiry ? getTime(expiry * 1000) : "-"} </div>
-			</div>
+				)
+			}
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				{
 					hasSufficienFunds ? (
 						<button
-							onClick={() => onPayInvoice()}
+							onClick={() => { !isLnurlWithdrawal ? onPayInvoice() : onCreateLnurlWithdrawal() }}
 							className="border-green-500 text-green-500 border-2 hover:opacity-80 cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 							<div className="flex flex-row">
 								<div className="mx-auto w-32 flex">
-									<div className="mx-auto">Pay</div>
+									{
+										isLnurlWithdrawal ? (
+
+											<div className="mx-auto">Create</div>
+										) : (
+											<div className="mx-auto">Pay</div>
+										)
+									}
 								</div>
 							</div>
 						</button>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { MdClose, MdEast, MdOutlineArrowDropDown } from 'react-icons/md';
+import { MdClose, MdEast, MdOutlineArrowDropDown, MdSwapVert } from 'react-icons/md';
 
 import { API_NAMES } from 'consts';
 import { VIEWS } from 'consts';
@@ -16,6 +16,7 @@ import { useAppSelector } from 'hooks';
 import { CURRENCY_SYMBOL_MAP } from 'consts/misc/currency';
 import { roundDecimal } from 'utils/format';
 import { TOAST_LEVEL, displayToast } from 'utils/toast';
+import { fixed } from 'utils/Big';
 
 export const ConvertFunds = () => {
 
@@ -112,6 +113,15 @@ const SwapForm = ({ onSwap }) => {
 		onSwap({ fromCurrency: fromCurrency, toCurrency: toCurrency, fromAmount: fromAmount, toAmount: toAmount })
 	}
 
+	const onFillMaxAmount = () => {
+		setFromAmount(fixed(fromBalance, 8))
+	}
+
+	const onSwapToFrom = () => {
+		setFromCurrency(toCurrency);
+		setToCurrency(fromCurrency);
+	}
+
 	return (
 		<div>
 			<div className="text-left mt-8">
@@ -132,10 +142,14 @@ const SwapForm = ({ onSwap }) => {
 							<DropDown setCurrency={setFromCurrency} currency={fromCurrency} availableCurrencies={availableWallets} />
 						</div>
 					</div>
-					<div className="text-xs mt-2">{CURRENCY_SYMBOL_MAP[fromCurrency]} {fromBalance} available</div>
-
+					<div className="text-xs mt-2 cursor-pointer" onClick={() => onFillMaxAmount()}>{CURRENCY_SYMBOL_MAP[fromCurrency]} {fromBalance} available</div>
 				</div>
-				<div className="mt-8">
+				<div className="text-4xl flex mt-4">
+					<div className="mx-auto cursor-pointer" onClick={() => onSwapToFrom()}>
+						<MdSwapVert />
+					</div>
+				</div>
+				<div className="">
 					To
 					<div className="flex border border-2 mt-1 rounded-md w-full">
 						<div>

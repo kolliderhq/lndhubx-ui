@@ -1,4 +1,4 @@
-import { MdClose, MdOutlineArrowDropDown, MdEast } from 'react-icons/md';
+import { MdClose, MdOutlineArrowDropDown, MdEast, MdOutlineFiberManualRecord } from 'react-icons/md';
 
 import { VIEWS } from 'consts';
 import { setView } from 'contexts/modules/layout';
@@ -181,6 +181,18 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 
 	}, [amount, balance])
 
+	const onManual = () => {
+		if (isLnurlWithdrawal) {
+			setIsLnurlWithdrawal(false)
+		} else {
+			setIsLnurlWithdrawal(true)
+		}
+	}
+
+	const onMaxAmount = () => {
+		setLnurlWithdrawalAmount(balance * 0.995)
+	}
+
 	useEffect(() => {
 		console.log(bankInfo)
 		console.log(amount)
@@ -218,7 +230,14 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 													className="input-default inline-block w-full border rounded-md border-transparent h-14"
 												/>
 											</div>
-											<div className="border rounded-md px-2 py-1 w-12 mt-2">Max</div>
+											<div className="w-full flex flex-row">
+												<div className="border rounded-md px-2 py-1 w-12 mt-2 cursor-pointer" onClick={() => onMaxAmount()}>Max</div>
+												<div className="border flex rounded-md px-2 py-1 w-24 mt-2 cursor-pointer ml-2" onClick={() => onManual()}>
+													<div className="mx-auto">
+														Manual
+													</div>
+												</div>
+											</div>
 										</div>
 									)
 								}
@@ -231,16 +250,6 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 							<div className="">
 								<div className="font-light">
 									Send To
-								</div>
-								<div className="border border-2 mt-1 rounded-md w-full">
-									<input
-										value={invoice}
-										onInput={e => setInvoice(e.target.value)}
-										placeholder="Paste you invoice here."
-										type="text"
-										style={{ textAlign: 'left' }}
-										className="input-default inline-block w-full border rounded-md border-transparent h-14"
-									/>
 								</div>
 								<div className="border border-2 mt-1 rounded-md w-full">
 									<input
@@ -280,11 +289,14 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 								}
 							</div>
 
-							<div className="text-left w-full">NodeKey</div>
-							<div className="text-right w-full truncate ...">{nodeKey ? nodeKey : "-"} </div>
+						</div>
 
-							<div className="text-left w-full">Expiry</div>
-							<div className="text-right w-full truncate ...">{expiry ? getTime(expiry * 1000) : "-"} </div>
+						<div className="w-full flex">
+							<div className="m-auto border bg-yellow-400 text-white flex rounded-md px-2 py-1 mt-2 cursor-pointer ml-2" onClick={() => onManual()}>
+								<div className="mx-auto">
+									Lnurl Withdrawal
+								</div>
+							</div>
 						</div>
 					</div>
 				)

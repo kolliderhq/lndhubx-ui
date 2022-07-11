@@ -21,7 +21,7 @@ export const Welcome = ({ }) => {
 			<div className="m-auto">
 				<div className="w-full flex flex-col justify-center text-center text-black text-xl">
 					<div className="m-auto">
-						<Img src="/assets/logos/kollider_icon_black.png" className="w-12" />
+						<Img src="/assets/logos/kollider_icon_gradient.png" className="w-12" />
 					</div>
 					<div className="mt-2 m-auto">Pay</div>
 				</div>

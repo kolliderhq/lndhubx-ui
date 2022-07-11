@@ -62,7 +62,7 @@ export const WalletCard = () => {
 			<div className="text-lg flex flex-row">
 				<div className='m-auto flex'>
 					<div className="mx-auto">
-						<Img src="/assets/logos/kollider_icon_black.png" className="w-10 animate-pulse" />
+						<Img src="/assets/logos/kollider_icon_gradient.png" className="w-10 animate-pulse" />
 					</div>
 					{/* <div className="ml-3 my-auto">
 						Wallet */}

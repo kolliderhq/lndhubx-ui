@@ -99,14 +99,14 @@ const SwapForm = ({ onSwap }) => {
 	}, [fromCurrency, toCurrency, availableWallets])
 
 	useMemo(() => {
-		let n = roundDecimal(lastQuote * fromAmount, 8)
+		let n = fixed(lastQuote * fromAmount, 8)
 		setToAmount(n)
 	}, [fromCurrency, toCurrency, fromAmount, lastQuote])
 
 	useEffect(() => {
 		if (!wallets) return
 		let balance = wallets[fromCurrency] ? wallets[fromCurrency].balance : 0;
-		setFromBalance(roundDecimal(balance, 8))
+		setFromBalance((Math.floor(balance * 10000000) / 10000000).toString())
 	}, [wallets, fromCurrency])
 
 	const onClickSwap = () => {
@@ -114,7 +114,7 @@ const SwapForm = ({ onSwap }) => {
 	}
 
 	const onFillMaxAmount = () => {
-		setFromAmount(fixed(fromBalance, 8))
+		setFromAmount((Math.floor(fromBalance * 10000000) / 10000000).toString())
 	}
 
 	const onSwapToFrom = () => {

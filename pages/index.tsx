@@ -19,6 +19,7 @@ import { Receive } from '../components/Receive';
 import { Settings } from '../components/Settings';
 import { Welcome } from '../components/Welcome';
 import useTxWatcher from 'hooks/txWatcher';
+import Head from 'next/head';
 
 export default function Home() {
 	const [selectedView, isLoggedIn] = useAppSelector(state => [

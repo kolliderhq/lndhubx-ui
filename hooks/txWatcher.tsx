@@ -45,7 +45,7 @@ export default function useTxWatcher() {
 								{/* <div className="">
 									<Img src={UI.RESOURCES.getCurrencySymbol(tx.inboundCurrency.toLowerCase())} className="h-6 w-6" />
 								</div> */}
-								<p>{` 💸 Received ${roundDecimal(tx.inboundAmount, 8)} ${tx.inboundCurrency} deposit! 💸`}</p>
+								<p>{` Received ${roundDecimal(tx.inboundAmount, 8)} ${tx.inboundCurrency} deposit! 💸`}</p>
 							</div>,
 							{
 								type: 'info',
@@ -61,7 +61,7 @@ export default function useTxWatcher() {
 								{/* <div className="">
 									<Img src={UI.RESOURCES.getCurrencySymbol(tx.inboundCurrency.toLowerCase())} className="h-6 w-6" />
 								</div> */}
-								<p>{` 💸 Send ${roundDecimal(tx.outboundAmount, 8)} ${tx.inboundCurrency} successfully! 💸`}</p>
+								<p>{`Send ${roundDecimal(tx.outboundAmount, 8)} ${tx.outboundCurrency} successfully! 💸`}</p>
 							</div>,
 							{
 								type: 'info',

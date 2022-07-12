@@ -15,6 +15,7 @@ import useSWR from 'swr';
 import { getSWROptions } from 'utils/fetchers';
 import { setAvailableWallets, storeDispatch } from 'contexts';
 import Img from 'react-cool-img';
+import { Sparklines, SparklinesLine } from 'react-sparklines';
 
 export const WalletCard = () => {
 	const [wallets, availableWallets, selectedWallet] = useAppSelector(state => [
@@ -64,11 +65,12 @@ export const WalletCard = () => {
 					<div className="mx-auto">
 						<Img src="/assets/logos/kollider_icon_gradient.png" className="w-10 animate-pulse" />
 					</div>
-					{/* <div className="ml-3 my-auto">
-						Wallet */}
-					{/* </div> */}
-
 				</div>
+			</div>
+			<div>
+				{/* <Sparklines data={[5, 10, 5, 20, 8, 15]} limit={5} width={100} height={20} margin={5} color={'black'}>
+					<SparklinesLine color="black" />
+				</Sparklines> */}
 			</div>
 			<div className="border-b border-gray-50 pb-2 text-left mt-8">Accounts</div>
 			<div></div>

@@ -9,6 +9,7 @@ import { VIEWS } from 'consts';
 import { setView } from 'contexts/modules/layout';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import Img from 'react-cool-img';
+import Head from 'next/head';
 
 export const Header = () => {
 	const dispatch = useAppDispatch();
@@ -16,6 +17,9 @@ export const Header = () => {
 
 	return (
 		<div className="flex items-center justify-between w-full h-14 pb text-gray-800">
+		<Head>
+      	<link rel="shortcut icon" href="/favicon.ico" />
+			</Head>
 			<figure className="w-full flex items-center justify-start relative">
 				{/* <img className="w-30 h-[50px] xs:w-30 xs:h-8" src="/assets/logos/zonic-icon.png" /> */}
 				<div className="text-2xl px-2"><Img src="/assets/logos/kollider_logo_gradient_black.png" className="w-32"/></div><div className="mb-4 text-sm font-bold">Pay</div>

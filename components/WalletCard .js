@@ -15,7 +15,6 @@ import useSWR from 'swr';
 import { getSWROptions } from 'utils/fetchers';
 import { setAvailableWallets, storeDispatch } from 'contexts';
 import Img from 'react-cool-img';
-import { Sparklines, SparklinesLine } from 'react-sparklines';
 
 export const WalletCard = () => {
 	const [wallets, availableWallets, selectedWallet] = useAppSelector(state => [

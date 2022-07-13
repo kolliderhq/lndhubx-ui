@@ -106,7 +106,7 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 					</div>
 				</div>
 				<div className="mt-8">
-					Discription <span className="text-xs">(optional)</span>
+					Description <span className="text-xs">(optional)</span>
 					<div className="border border-2 mt-1 rounded-md w-full relative">
 						<input
 							value={memo}

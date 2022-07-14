@@ -26,7 +26,7 @@ export const AccountDetail = () => {
 		if (selectedWallet === "BTC") {
 			newTxs = newTxs.filter(e => (e.inboundCurrency === "BTC" && e.outboundCurrency === "BTC") || e.txType === "Internal");
 		}
-		setTxs(newTxs.sort((a, b) => (a.createdAt < b.createdAt)))
+		setTxs(newTxs.sort((a, b) => (b.createdAt - a.createdAt)))
 	})
 
 	useEffect(() => {

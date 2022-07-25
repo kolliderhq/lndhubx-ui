@@ -6,8 +6,6 @@ import { storeDispatch } from 'contexts';
 import { setView } from 'contexts/modules/layout';
 import { VIEWS } from 'consts';
 import Img from 'react-cool-img';
-import Lottie from "lottie-react";
-import test from 'public/test.json'
 
 export const Welcome = ({ }) => {
 	const dispatch = useAppDispatch();

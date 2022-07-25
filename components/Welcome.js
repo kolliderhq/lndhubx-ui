@@ -6,6 +6,8 @@ import { storeDispatch } from 'contexts';
 import { setView } from 'contexts/modules/layout';
 import { VIEWS } from 'consts';
 import Img from 'react-cool-img';
+import Lottie from "lottie-react";
+import test from 'public/test.json'
 
 export const Welcome = ({ }) => {
 	const dispatch = useAppDispatch();
@@ -20,7 +22,7 @@ export const Welcome = ({ }) => {
 		<div className="flex flex-col w-full h-full text-gray-600">
 			<div className="m-auto">
 				<div className="w-full flex flex-col justify-center text-center text-black text-xl">
-					<div className="m-auto">
+					<div className="m-auto bg">
 						<Img src="/assets/logos/kollider_icon_gradient.png" className="w-12" />
 					</div>
 					<div className="mt-2 m-auto">Pay</div>

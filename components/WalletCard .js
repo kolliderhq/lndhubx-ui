@@ -66,11 +66,6 @@ export const WalletCard = () => {
 					</div>
 				</div>
 			</div>
-			<div>
-				{/* <Sparklines data={[5, 10, 5, 20, 8, 15]} limit={5} width={100} height={20} margin={5} color={'black'}>
-					<SparklinesLine color="black" />
-				</Sparklines> */}
-			</div>
 			<div className="border-b border-gray-50 pb-2 text-left mt-8">Accounts</div>
 			<div></div>
 			{

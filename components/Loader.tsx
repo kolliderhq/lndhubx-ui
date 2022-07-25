@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { TriangleSpinner } from 'components/vendor/spinner';
+import Img from 'react-cool-img';
 
 export default function Loader({ text, color }: { text?: string, color?: string }) {
 	return (
@@ -9,12 +10,15 @@ export default function Loader({ text, color }: { text?: string, color?: string 
 				{text ? (
 					<div className="grid grid-rows-2 gap-4">
 						<div className="flex justify-center">
-							<TriangleSpinner color={color} height={50} width={50} />
+							{/* <TriangleSpinner color={color} height={50} width={50} /> */}
+							<Img src={'kollider_loader.svg'} height={126} width={126} />
+
 						</div>
 						<div className="text-center">{text}</div>
 					</div>
 				) : (
-					<TriangleSpinner color={color} height={50} width={50} />
+					// <TriangleSpinner color={color} height={50} width={50} />
+					<Img src={'kollider_loader.svg'} height={126} width={126} />
 				)}
 			</div>
 		</div>

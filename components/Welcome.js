@@ -17,9 +17,9 @@ export const Welcome = ({ }) => {
 
 	return (
 
-		<div className="flex flex-col w-full h-full text-gray-600">
+		<div className="flex flex-col w-full h-full text-gray-600 text-white">
 			<div className="m-auto">
-				<div className="w-full flex flex-col justify-center text-center text-black text-xl">
+				<div className="w-full flex flex-col justify-center text-center text-xl">
 					<div className="m-auto bg">
 						<Img src="/assets/logos/kollider_icon_gradient.png" className="w-12" />
 					</div>

@@ -17,7 +17,7 @@ export const Welcome = ({ }) => {
 
 	return (
 
-		<div className="flex flex-col w-full h-full text-gray-600 text-white">
+		<div className="flex flex-col w-full h-full text-white text-white">
 			<div className="m-auto">
 				<div className="w-full flex flex-col justify-center text-center text-xl">
 					<div className="m-auto bg">
@@ -36,7 +36,7 @@ export const Welcome = ({ }) => {
 			<div className="w-full flex items-center justify-center">
 				<button
 					onClick={() => storeDispatch(setView(VIEWS.CREATE))}
-					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Create New Wallet</p>
 				</button>
 			</div>
@@ -44,7 +44,7 @@ export const Welcome = ({ }) => {
 			<div className="w-full flex items-center justify-center mt-2 mb-8">
 				<button
 					onClick={() => storeDispatch(setView(VIEWS.LOGIN))}
-					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Login</p>
 				</button>
 			</div>

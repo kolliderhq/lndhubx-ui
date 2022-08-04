@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ImArrowLeft2 } from "react-icons/im";
 import { setUserData, storeDispatch } from "contexts";
 import { setView } from "contexts/modules/layout";
@@ -16,6 +16,14 @@ export const Create = () => {
 		storeDispatch(setUserData(userObj));
 		storeDispatch(setView(VIEWS.CREATE_PASSWORD))
 	}
+
+	const onEnter = useCallback(
+		e => {
+			if (e.key === 'Enter') onCeateUsername();
+		},
+		[onCeateUsername]
+	);
+
 	return (
 		<div className="flex flex-col h-full p-8 relative text-whit">
 			<div className="flex flex-row w-full text-4xl">
@@ -36,6 +44,7 @@ export const Create = () => {
 						<input
 							value={username}
 							onInput={e => setUsername(e.target.value)}
+							onKeyDown={onEnter}
 							placeholder="Enter your username"
 							type="text"
 							style={{ textAlign: 'left' }}

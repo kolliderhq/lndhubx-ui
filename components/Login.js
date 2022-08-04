@@ -77,6 +77,7 @@ export const Login = () => {
 										value={password}
 										onInput={e => setPassword(e.target.value)}
 										placeholder="Enter your password"
+										onKeyDown={onEnter}
 										type="password"
 										style={{ textAlign: 'left' }}
 										className="input-default inline-block w-full border rounded-md border-transparent h-12 bg-gray-700"

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ImArrowLeft2 } from "react-icons/im";
 import { storeDispatch } from "contexts";
 import { setView } from "contexts/modules/layout";
@@ -33,6 +33,13 @@ export const CreatePassword = () => {
 			setIsPasswordValid(false)
 		}
 	}, [password, repeatPassword])
+
+	const onEnter = useCallback(
+		e => {
+			if (e.key === 'Enter') onCreate();
+		},
+		[onCreate]
+	);
 
 	return (
 		<div className="flex flex-col h-full p-8 relative text-white">
@@ -79,6 +86,7 @@ export const CreatePassword = () => {
 										type="text"
 										style={{ textAlign: 'left' }}
 										className="input-default inline-block w-full border rounded-md border-transparent h-12 bg-gray-700"
+										onKeyDown={onEnter}
 									/>
 								</div>
 								{

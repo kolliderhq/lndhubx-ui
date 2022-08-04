@@ -2,7 +2,7 @@ import React from 'react';
 
 export const Footer = () => {
 	return (
-		<footer className="fixed bottom-0 left-0 w-full h-12 bg-transparent">
+		<footer className="w-full h-12 bg-transparent">
 			<div className="w-full flex items-center h-8 z-80">
 				<div className="grid grid-cols-3 w-full px-4">
 					<div className="flex">

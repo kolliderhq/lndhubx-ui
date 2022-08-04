@@ -58,15 +58,15 @@ export const WalletCard = () => {
 	}
 
 	return (
-		<div className="relative p-8 text-black">
+		<div className="relative p-8 text-white">
 			<div className="text-lg flex flex-row">
 				<div className='m-auto flex'>
 					<div className="mx-auto">
-						<Img src="/assets/logos/kollider_icon_gradient.png" className="w-10 animate-pulse" />
+						<Img src="/assets/logos/kollider_icon_gradient.png" className="w-10" />
 					</div>
 				</div>
 			</div>
-			<div className="border-b border-gray-50 pb-2 text-left mt-8">Accounts</div>
+			<div className="border-b border-gray-600 pb-2 text-left mt-8">Accounts</div>
 			<div></div>
 			{
 				walletsLoaded ? availableWallets.map(currency => (
@@ -87,18 +87,18 @@ const AccountListItem = (currency, wallet) => {
 	}
 
 	return (
-		<div className="w-full h-20 bg-gray-25 hover:bg-gray-50 rounded-xl mt-3 text-left cursor-pointer" onClick={() => onSelectAccout()}>
-			<div className="grid grid-cols-3 h-full text-black">
-				<div className="m-auto w-full">
-					<div className="grid grid-cols-2 w-full flex">
-						<div className="ml-3 w-full">
+		<div className="w-full h-20 border rounded-1xl border-gray-600 border-2 hover:bg-gray-700 rounded-xl mt-3 text-left cursor-pointer" onClick={() => onSelectAccout()}>
+			<div className="grid grid-cols-2 h-full text-white">
+				<div className="flex justify-start my-auto">
+					<div className="w-full flex flex-row">
+						<div className="ml-3">
 							<Img width={40} height={40} src={UI.RESOURCES.getCurrencySymbol(currency.toLowerCase())} />
 						</div>
-						<div className="my-auto">
+						<div className="my-auto ml-3">
 							{CURRENCY_NAME_MAP[currency]}
 							{
 								currency !== "BTC" && (
-									<div className="flex text-xs font-light rounded-xl bg-purple-500 text-white w-20">
+									<div className="flex text-xs font-light rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white w-20">
 										<div className="m-auto">
 											Synthetic
 										</div>
@@ -108,12 +108,10 @@ const AccountListItem = (currency, wallet) => {
 						</div>
 					</div>
 				</div>
-				<div>
-				</div>
-				<div className="m-auto">
-					<p className="truncate ...">
+				<div className="flex justify-end my-auto">
+					<p className="truncate ... text-xl mr-4">
 						{
-							roundDecimal(wallet.balance, 8)
+							roundDecimal(wallet.balance, currency !== 'BTC' ? 2: 8)
 						}
 					</p>
 				</div>

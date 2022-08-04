@@ -38,7 +38,7 @@ export const Settings = () => {
 	}
 
 	return (
-		<div className="flex flex-col h-full p-8 relative text-black">
+		<div className="flex flex-col h-full p-8 relative text-white">
 			<div className="flex flex-row w-full text-4xl text-gray-600">
 				<div className="">
 					<button onClick={() => storeDispatch(setView(VIEWS.OVERVIEW))}>
@@ -48,7 +48,7 @@ export const Settings = () => {
 			</div>
 			<div className="text-lg">Settings</div>
 			<div className="mt-8">
-				<button className="bg-red-400 text-white rounded-lg w-3/4 py-2" onClick={() => auth.logoutUser()}>Logout</button>
+				<button className=" border border-gray-600 text-white rounded-lg w-3/4 py-2 hover:bg-gray-700" onClick={() => auth.logoutUser()}>Logout</button>
 			</div>
 		</div>
 	)

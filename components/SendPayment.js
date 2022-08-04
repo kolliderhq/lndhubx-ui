@@ -68,7 +68,7 @@ export const SendPayment = () => {
 	}, [wallets, selectedWallet])
 
 	return (
-		<div className="flex flex-col h-full p-8 relative text-black">
+		<div className="flex flex-col h-full p-8 relative text-white">
 			<div className="relative w-full">
 				<div className="absolute top-0 right-0 h-16 w-16 text-4xl text-gray-600">
 					<div>
@@ -211,7 +211,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 								{
 									lnurlWithdrawal ? (
 										<div className="flex w-full">
-											<div className="m-auto">
+											<div className="m-auto border border-gray-600 rounded-lg p-2">
 												<QrCode value={lnurlWithdrawal} wrapperClass={"border-radius: 32px"} size={256} imageSettings={{ src: UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase()), x: null, y: null, height: 48, width: 48, excavate: true }} />
 											</div>
 										</div>
@@ -220,19 +220,19 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 											<div className="font-light">
 												Amount you want to send
 											</div>
-											<div className="border border-2 mt-1 rounded-md w-full">
+											<div className="border border-1 mt-1 rounded-md w-full border-gray-600">
 												<input
 													value={lnurlWithdrawalAmount}
 													onInput={e => setLnurlWithdrawalAmount(e.target.value)}
 													placeholder="Amount you want to send."
 													type="number"
 													style={{ textAlign: 'left' }}
-													className="input-default inline-block w-full border rounded-md border-transparent h-14"
+													className="input-default inline-block w-full rounded-md h-14 bg-gray-700"
 												/>
 											</div>
 											<div className="w-full flex flex-row">
-												<div className="border rounded-md px-2 py-1 w-12 mt-2 cursor-pointer" onClick={() => onMaxAmount()}>Max</div>
-												<div className="border flex rounded-md px-2 py-1 w-24 mt-2 cursor-pointer ml-2" onClick={() => onManual()}>
+												<div className="border border-gray-600 rounded-md px-2 py-1 w-12 mt-2 cursor-pointer" onClick={() => onMaxAmount()}>Max</div>
+												<div className="border border-gray-600 flex rounded-md px-2 py-1 w-24 mt-2 cursor-pointer ml-2" onClick={() => onManual()}>
 													<div className="mx-auto">
 														Manual
 													</div>
@@ -306,7 +306,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 					hasSufficienFunds ? (
 						<button
 							onClick={() => { !isLnurlWithdrawal ? onPayInvoice() : onCreateLnurlWithdrawal() }}
-							className="border-green-500 text-green-500 border-2 hover:opacity-80 cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+							className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 							<div className="flex flex-row">
 								<div className="mx-auto w-32 flex">
 									{
@@ -358,7 +358,7 @@ const DropDown = () => {
 	}
 	return (
 		<div className="relative">
-			<div className="w-full border p-4 rounded-md grid grid-cols-2 cursor-pointer" onClick={() => onClickDropDown()}>
+			<div className="w-full border border-gray-600 p-4 rounded-md grid grid-cols-2 cursor-pointer" onClick={() => onClickDropDown()}>
 				<div className="flex">
 					<Img src={UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase())} className="h-6 w-6" />
 					<div className="my-auto ml-2">
@@ -392,10 +392,10 @@ const Dropped = ({ onClickDropDown }) => {
 	}
 
 	return (
-		<div className="border-l border-r border-b rounded-b-md grid grid-cols-1 divide-y absolute w-full">
+		<div className="border-l border-r border-b border-gray-600 rounded-b-md grid grid-cols-1 divide-y divide-gray-600 absolute w-full bg-gray-700">
 			{
 				availableWallets.map(currency => (
-					<div className="flex p-4 cursor-pointer rounded-b-md bg-white" onClick={() => onSelect(currency)}>
+					<div className="flex p-4 cursor-pointer rounded-b-md hover:bg-gray-800" onClick={() => onSelect(currency)}>
 						<div>
 							<Img src={UI.RESOURCES.getCurrencySymbol(currency.toLowerCase())} className="h-6 w-7" />
 						</div>
@@ -434,7 +434,7 @@ const PaymentComplete = ({ paymentObj }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => storeDispatch(setView(VIEWS.OVERVIEW))}
-					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border hover:bg-gray-600 hover:text-white cursor-pointer rounded-lg w-5/6 px-5 py-3">
 					<p>Complete</p>
 				</button>
 			</div>

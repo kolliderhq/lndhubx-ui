@@ -22,7 +22,7 @@ export const Header = () => {
 			</Head>
 			<figure className="w-full flex items-center justify-start relative">
 				{/* <img className="w-30 h-[50px] xs:w-30 xs:h-8" src="/assets/logos/zonic-icon.png" /> */}
-				<div className="text-2xl px-2"><Img src="/assets/logos/kollider_logo_gradient_black.png" className="w-32"/></div><div className="mb-4 text-sm font-bold">Pay</div>
+				<div className="text-2xl px-2"><Img src="/assets/logos/kollider_logo_gradient_white.png" className="w-32"/></div><div className="mb-4 text-sm font-bold text-white">Pay</div>
 			</figure>
 			<div className="col-span-2 w-full flex items-center justify-end gap-3 xxs:gap-4">
 				<div className="flex h-full border-r border-gray-800">
@@ -38,10 +38,10 @@ export const Header = () => {
 					<button
 						onClick={() => dispatch(setView(VIEWS.SETTINGS))}
 						className={cn(
-							{ 'rotate-90 s-filter-theme-main': currentDialog === DIALOGS.SETTINGS },
-							'min-w-[28px] mr-1 py-2 flex items-center justify-center hover:rotate-90 s-transition-rotate s-filter-theme-main-hover hover:opacity-80'
+							{ 'rotate-90': currentDialog === DIALOGS.SETTINGS },
+							'min-w-[28px] mr-1 py-2 flex items-center justify-center hover:rotate-90 s-transition-rotate hover:opacity-80'
 						)}>
-						<FaCog className="text-xl" />
+						<FaCog className="text-xl text-gray-400" />
 					</button>
 				)}
 			</div>

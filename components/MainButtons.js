@@ -7,7 +7,7 @@ import { useAppDispatch } from 'hooks';
 export const MainButtons = () => {
 	let dispatch = useAppDispatch();
 	return (
-		<div className="flex justify-center mt-4 bg-gray-25 w-full h-full rounded-b-2xl text-black">
+		<div className="flex justify-center mt-4 bg-gray-800 w-full h-full rounded-b-2xl text-white border-t border-gray-600">
 			<div className="m-auto flex">
 				<div className="">
 					<button className="mx-2 px-4 py-2 rounded-3xl font-semibold uppercase tracking-wide"

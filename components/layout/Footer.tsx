@@ -2,7 +2,7 @@ import React from 'react';
 
 export const Footer = () => {
 	return (
-		<footer className="fixed bottom-0 left-0 w-full h-12 bg-white">
+		<footer className="fixed bottom-0 left-0 w-full h-12 bg-transparent">
 			<div className="w-full flex items-center h-8 z-80">
 				<div className="grid grid-cols-3 w-full px-4">
 					<div className="flex">
@@ -11,8 +11,8 @@ export const Footer = () => {
 					<div className="flex flex-col w-full">
 						<a href="https://kollider.xyz" className="mx-auto cursor-pointer">
 							<div className="flex flex-col mx-auto">
-								<div className="text-gray-800">Powered by </div>
-								<div className="mx-auto text-black">
+								<div className="text-gray-400">Powered by </div>
+								<div className="mx-auto text-white">
 									<a href="https://github.com/kolliderhq/lndhubx">
 										Lnd<span className="font-bold">Hub</span>
 										<span className="text-purple-500 font-bold">X</span>

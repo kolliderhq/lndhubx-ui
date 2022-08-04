@@ -49,7 +49,7 @@ export const Receive = () => {
 	}
 
 	return (
-		<div className="flex flex-col h-full p-8 relative">
+		<div className="flex flex-col h-full p-8 relative text-white">
 			<div className="relative w-full">
 				<div className="absolute top-0 right-0 h-16 w-16 text-4xl text-gray-600">
 					<div>
@@ -59,7 +59,7 @@ export const Receive = () => {
 					</div>
 				</div>
 			</div>
-			<div className="text-black mt-4">
+			<div className="mt-4">
 				<div className="mt-4 text-xl">Receive</div>
 				<div className="text-left mt-8">
 					Account
@@ -70,10 +70,10 @@ export const Receive = () => {
 				{
 					invoice ? (
 						<div className="flex flex-col h-full w-full">
-							<div className="mx-auto mt-10 border-4 border-gray-400 rounded-xl p-2" onClick={() => onQrCodeClick()}>
+							<div className="mx-auto mt-10 border border-gray-600 rounded-xl p-2" onClick={() => onQrCodeClick()}>
 								<QrCode value={invoice} wrapperClass={"border-radius: 32px"} size={256} imageSettings={{ src: UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase()), x: null, y: null, height: 48, width: 48, excavate: true }} />
 							</div>
-							<button className="h-12 w-32 border mx-auto rounded-lg mt-8" onClick={() => onQrCodeClick()}>
+							<button className="h-12 w-32 border mx-auto rounded-lg mt-8 border-gray-600" onClick={() => onQrCodeClick()}>
 								Copy
 							</button>
 						</div>
@@ -94,27 +94,27 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 			<div className="text-left mt-8">
 				<div className="">
 					Amount <span className="text-xs">(in {currency})</span>
-					<div className="border border-2 mt-1 rounded-md w-full">
+					<div className="border border-1 mt-1 rounded-md w-full border-gray-600">
 						<input
 							value={amount}
 							onInput={e => setAmount(e.target.value)}
 							placeholder=""
 							type="number"
 							style={{ textAlign: 'left' }}
-							className="input-default inline-block w-full border rounded-md border-transparent h-14"
+							className="input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"
 						/>
 					</div>
 				</div>
 				<div className="mt-8">
 					Description <span className="text-xs">(optional)</span>
-					<div className="border border-2 mt-1 rounded-md w-full relative">
+					<div className="border border-1 border-gray-600 mt-1 rounded-md w-full relative">
 						<input
 							value={memo}
 							onInput={e => setMemo(e.target.value)}
 							placeholder="Add description"
 							type="text"
 							style={{ textAlign: 'left' }}
-							className="input-default inline-block w-full border rounded-md border-transparent h-14"
+							className="input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"
 						/>
 					</div>
 				</div>
@@ -122,7 +122,7 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => onCreateInvoice(amount, memo)}
-					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Create Invoice</p>
 				</button>
 			</div>
@@ -152,7 +152,7 @@ const DropDown = ({ resetInovice }) => {
 	}
 	return (
 		<div className="relative">
-			<div className="w-full border p-4 rounded-md grid grid-cols-2 cursor-pointer" onClick={() => onClickDropDown()}>
+			<div className="w-full border border-gray-600 p-4 rounded-md grid grid-cols-2 cursor-pointer" onClick={() => onClickDropDown()}>
 				<div className="flex">
 					<Img src={UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase())} className="h-6 w-6" />
 					<div className="my-auto ml-2">
@@ -186,10 +186,10 @@ const Dropped = ({ onClickDropDown }) => {
 	}
 
 	return (
-		<div className="border-l border-r border-b rounded-b-md grid grid-cols-1 divide-y absolute w-full">
+		<div className="border-l border-r border-b border-gray-600 rounded-b-md grid grid-cols-1 divide-y divide-gray-600 absolute w-full">
 			{
 				availableWallets.map(currency => (
-					<div className="flex p-4 cursor-pointer rounded-b-md bg-white" onClick={() => onSelect(currency)}>
+					<div className="flex p-4 cursor-pointer rounded-b-md bg-gray-700 hover:bg-gray-800" onClick={() => onSelect(currency)}>
 						<div>
 							<Img src={UI.RESOURCES.getCurrencySymbol(currency.toLowerCase())} className="h-6 w-7" />
 						</div>

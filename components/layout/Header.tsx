@@ -38,10 +38,10 @@ export const Header = () => {
 					<button
 						onClick={() => dispatch(setView(VIEWS.SETTINGS))}
 						className={cn(
-							{ 'rotate-90 s-filter-theme-main': currentDialog === DIALOGS.SETTINGS },
-							'min-w-[28px] mr-1 py-2 flex items-center justify-center hover:rotate-90 s-transition-rotate s-filter-theme-main-hover hover:opacity-80'
+							{ 'rotate-90': currentDialog === DIALOGS.SETTINGS },
+							'min-w-[28px] mr-1 py-2 flex items-center justify-center hover:rotate-90 s-transition-rotate hover:opacity-80'
 						)}>
-						<FaCog className="text-xl" />
+						<FaCog className="text-xl text-gray-400" />
 					</button>
 				)}
 			</div>

@@ -35,50 +35,50 @@ export const CreatePassword = () => {
 	}, [password, repeatPassword])
 
 	return (
-		<div className="flex flex-col h-full p-8 relative">
+		<div className="flex flex-col h-full p-8 relative text-white">
 			{
 				isLoading ? (
 					<div className="text-gray-500 m-auto">
-						<Loader color="gray" />
-						Creating..
+						<Loader/>
+						Creating...
 					</div>
 				) : (
 					<>
-						<div className="flex flex-row w-full text-4xl text-gray-600">
+						<div className="flex flex-row w-full text-4xl">
 							<div className="">
 								<button onClick={() => storeDispatch(setView(VIEWS.CREATE))}>
 									<ImArrowLeft2 />
 								</button>
 							</div>
 						</div>
-						<div className="text-black text-left">
-							<div className="text-2xl text-black">Create Password</div>
+						<div className="text-left">
+							<div className="text-2xl">Create Password</div>
 							<div className="mt-4">Set a password to log in to your wallet on a browser. You cannot use the password to recover your wallet.</div>
 						</div>
 						<div className="text-gray-500">
 							<div className="text-left mt-4">
 								<div>Password</div>
-								<div className="border border-2 rounded-md w-full relative">
+								<div className="border border-gray-600 rounded-md w-full relative">
 									<input
 										value={password}
 										onInput={e => setPassword(e.target.value)}
 										placeholder="Password"
 										type="text"
 										style={{ textAlign: 'left' }}
-										className="input-default inline-block w-full border rounded-md border-transparent h-12"
+										className="input-default inline-block w-full border rounded-md border-transparent h-12 bg-gray-700"
 									/>
 								</div>
 							</div>
 							<div className="text-left mt-4">
 								<div>Repeat Password</div>
-								<div className="border border-2 rounded-md w-full relative">
+								<div className="border border-gray-600 rounded-md w-full relative">
 									<input
 										value={repeatPassword}
 										onInput={e => setRepeatPassword(e.target.value)}
 										placeholder="Repeat Password"
 										type="text"
 										style={{ textAlign: 'left' }}
-										className="input-default inline-block w-full border rounded-md border-transparent h-12"
+										className="input-default inline-block w-full border rounded-md border-transparent h-12 bg-gray-700"
 									/>
 								</div>
 								{
@@ -92,7 +92,7 @@ export const CreatePassword = () => {
 							<button
 								disabled={!isPasswordValid}
 								onClick={() => onCreate()}
-								className={cn("border-gray-600 border-2 hover:bg-green-500 hover:text-white cursor-pointer border rounded-lg w-2/3 px-5 py-2", !isPasswordValid ? 'disabled:opacity-75 hover:bg-white hover:text-gray-600' : 'border-green-500 text-green-500')}>
+								className={cn("border-gray-600 hover:bg-gray-800 hover:text-white cursor-pointer border rounded-lg w-2/3 px-5 py-2", !isPasswordValid ? 'disabled:opacity-75 hover:bg-white hover:text-gray-700' : 'border-gray-600')}>
 								<p>Create Account</p>
 							</button>
 						</div>

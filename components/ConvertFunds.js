@@ -45,7 +45,7 @@ export const ConvertFunds = () => {
 	}
 
 	return (
-		<div className="flex flex-col h-full p-8 relative text-black">
+		<div className="flex flex-col h-full p-8 relative text-white">
 			<div className="relative w-full">
 				<div className="absolute top-0 right-0 h-16 w-16 text-4xl text-gray-600">
 					<div>
@@ -127,7 +127,7 @@ const SwapForm = ({ onSwap }) => {
 			<div className="text-left mt-8">
 				<div className="">
 					From
-					<div className="flex border border-2 mt-1 rounded-md w-full">
+					<div className="flex border border-1 mt-1 rounded-md w-full border-gray-600">
 						<div>
 							<input
 								value={fromAmount}
@@ -135,7 +135,7 @@ const SwapForm = ({ onSwap }) => {
 								placeholder=""
 								type="number"
 								style={{ textAlign: 'left' }}
-								className="input-default inline-block w-full border rounded-md border-transparent h-14"
+								className="input-default inline-block w-full border border-gray-600 rounded-l-md h-14 bg-gray-700"
 							/>
 						</div>
 						<div>
@@ -151,7 +151,7 @@ const SwapForm = ({ onSwap }) => {
 				</div>
 				<div className="">
 					To
-					<div className="flex border border-2 mt-1 rounded-md w-full">
+					<div className="flex border border-1 mt-1 rounded-md w-full border-gray-600">
 						<div>
 							<input
 								value={toAmount}
@@ -159,7 +159,7 @@ const SwapForm = ({ onSwap }) => {
 								placeholder=""
 								type="number"
 								style={{ textAlign: 'left' }}
-								className="input-default inline-block w-full border rounded-md border-transparent h-14"
+								className="input-default inline-block w-full border border-gray-600 rounded-l-md h-14 bg-gray-700"
 							/>
 						</div>
 						<div>
@@ -171,7 +171,7 @@ const SwapForm = ({ onSwap }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => onClickSwap()}
-					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Swap</p>
 				</button>
 			</div>
@@ -200,7 +200,7 @@ const DropDown = ({ setCurrency, currency, availableCurrencies }) => {
 
 
 	return (
-		<div className="w-32 z-50">
+		<div className="z-50">
 			<div className="p-4 rounded-md grid grid-cols-2 cursor-pointer" onClick={() => onClickDropDown()}>
 				<div className="flex">
 					<Img src={UI.RESOURCES.getCurrencySymbol(currency.toLowerCase())} className="h-6 w-6" />
@@ -216,11 +216,13 @@ const DropDown = ({ setCurrency, currency, availableCurrencies }) => {
 					</div>
 				</div>
 			</div>
-			{
-				showDropDown && (
-					<Dropped onClickDropDown={onClickDropDown} setCurrency={setCurrency} availableCurrencies={droppedCurrencies} />
-				)
-			}
+			<div className="w-full relative">
+				{
+					showDropDown && (
+						<Dropped onClickDropDown={onClickDropDown} setCurrency={setCurrency} availableCurrencies={droppedCurrencies} />
+					)
+				}
+			</div>
 		</div>
 	)
 }
@@ -233,10 +235,10 @@ const Dropped = ({ setCurrency, onClickDropDown, availableCurrencies }) => {
 	}
 
 	return (
-		<div className="border-l border-r border-b rounded-b-md grid grid-cols-1 divide-y absolute w-32">
+		<div className="border-l border-r border-b rounded-b-md grid grid-cols-1 divide-y divide-gray-600 border-gray-600 absolute w-full">
 			{
 				availableCurrencies.map(currency => (
-					<div className="flex p-4 cursor-pointer rounded-b-md bg-white" onClick={() => onSelect(currency)}>
+					<div className="flex p-4 cursor-pointer rounded-b-md bg-gray-700 hover:bg-gray-800" onClick={() => onSelect(currency)}>
 						<div>
 							<Img src={UI.RESOURCES.getCurrencySymbol(currency.toLowerCase())} className="h-6 w-7" />
 						</div>
@@ -267,7 +269,7 @@ const SwapComplete = ({ swapObj }) => {
 					<Img src={imgUrl} className="w-32" />
 				</div>
 				<div className="mt-4">Swap Complete</div>
-				<div className="m-auto w-full h-24 border rounded-xl mt-4">
+				<div className="m-auto w-full h-24 border border-gray-600 rounded-xl mt-4">
 					<div className="grid grid-cols-3 flex h-full">
 						<div className="m-auto flex flex-col">
 							<div>
@@ -296,7 +298,7 @@ const SwapComplete = ({ swapObj }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => storeDispatch(setView(VIEWS.OVERVIEW))}
-					className="border-gray-600 border-2 hover:bg-gray-600 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-1 hover:border-gray-500 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Complete</p>
 				</button>
 			</div>

@@ -88,13 +88,13 @@ const AccountListItem = (currency, wallet) => {
 
 	return (
 		<div className="w-full h-20 border rounded-1xl border-gray-600 border-2 hover:bg-gray-700 rounded-xl mt-3 text-left cursor-pointer" onClick={() => onSelectAccout()}>
-			<div className="grid grid-cols-3 h-full text-white">
-				<div className="m-auto w-full">
-					<div className="grid grid-cols-2 w-full flex">
-						<div className="ml-3 w-full">
+			<div className="grid grid-cols-2 h-full text-white">
+				<div className="flex justify-start my-auto">
+					<div className="w-full flex flex-row">
+						<div className="ml-3">
 							<Img width={40} height={40} src={UI.RESOURCES.getCurrencySymbol(currency.toLowerCase())} />
 						</div>
-						<div className="my-auto">
+						<div className="my-auto ml-3">
 							{CURRENCY_NAME_MAP[currency]}
 							{
 								currency !== "BTC" && (
@@ -108,12 +108,10 @@ const AccountListItem = (currency, wallet) => {
 						</div>
 					</div>
 				</div>
-				<div>
-				</div>
-				<div className="m-auto">
-					<p className="truncate ...">
+				<div className="flex justify-end my-auto">
+					<p className="truncate ... text-xl mr-4">
 						{
-							roundDecimal(Math.random() * (currency !== 'BTC'? 100: 0.1), currency !== 'BTC' ? 2: 8)
+							roundDecimal(wallet.balance, currency !== 'BTC' ? 2: 8)
 						}
 					</p>
 				</div>

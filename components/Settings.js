@@ -47,6 +47,16 @@ export const Settings = () => {
 				</div>
 			</div>
 			<div className="text-lg">Settings</div>
+			<div className="text-left mt-4 grid grid-cols-2">
+				<div className="font-light text-gray-500">Username</div>
+				<div className="">{username}</div>
+			</div>
+			{/* <div className="text-left mt-4">
+				<div>Units</div>
+				<div className="w-full p-2">
+					<div>BTC</div>
+				</div>
+			</div> */}
 			<div className="mt-8">
 				<button className=" border border-gray-600 text-white rounded-lg w-3/4 py-2 hover:bg-gray-700" onClick={() => auth.logoutUser()}>Logout</button>
 			</div>

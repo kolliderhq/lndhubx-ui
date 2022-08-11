@@ -18,6 +18,10 @@ import { displayToast, TOAST_LEVEL } from 'utils/toast';
 import Loader from './Loader';
 import { getRequest } from 'utils/api';
 import { QrCode } from './QrCode';
+import {
+	defaultLocalStore,
+} from 'contexts';
+import { CONTEXTS } from 'consts';
 
 export const SendPayment = () => {
 
@@ -37,18 +41,23 @@ export const SendPayment = () => {
 		setIsPaying(true);
 		try {
 			const res = await postRequest(API_NAMES.PAY, [], { paymentRequest: invoice, currency: currency });
-			setPaymentObj(res);
-			setIsPaying(false);
 			if (res.success) {
+				displayToast(`Successfully send payment.`, {
+					type: 'success',
+					level: TOAST_LEVEL.INFO,
+					toastId: 'copy-invoice',
+				});
+				setPaymentObj(res);
 				setIsPaymentComplete(true)
 			} else {
 				let text = `Payment Failed: ${res.error}`
-				displayToast(texnt, {
+				displayToast(text, {
 					type: 'error',
 					level: TOAST_LEVEL.CRITICAL,
 					toastId: 'copy-invoice',
 				});
 			}
+			setIsPaying(false);
 		} catch (err) {
 			setIsPaying(false)
 		}
@@ -119,20 +128,23 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [hasSufficienFunds, setHasSufficientFunds] = useState(true);
 
 	const [isLnurlWithdrawal, setIsLnurlWithdrawal] = useState(true);
+	const [isPayUser, setIsPayUser] = useState(false);
+	const [isPayManual, setIsPayManual] = useState(false);
 	const [lnurlWithdrawalAmount, setLnurlWithdrawalAmount] = useState(0);
 	const [lnurlWithdrawal, setLnurlWithdrawal] = useState("");
+	const [receipientUsername, setReceipientUsername] = useState("");
 
 	const [bankInfo, selectedWallet] = useAppSelector(state => [state.bank.info, state.wallets.selectedWallet])
 
 	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
 
+	const btcUnit = defaultLocalStore.cookieGet(CONTEXTS.LOCAL_STORAGE.DISPLAY_BTC_IN);
 
-	const onCreateLnurlWithdrawal = async (amount) => {
-		console.log("Button pressed")
-		amount = lnurlWithdrawalAmount.toString()
+
+	const onCreateLnurlWithdrawal = async () => {
+		let amount = lnurlWithdrawalAmount.toString()
 		let currency = selectedWallet ? selectedWallet : "BTC";
 		const data = await getRequest(API_NAMES.CREATE_LNURL_WITHDRAWAL, [amount, currency])
-		console.log(data);
 		if (data.error) {
 			displayToast(`${data.error}`, {
 				type: 'error',
@@ -142,6 +154,33 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		} else {
 			console.log(data.lnurl)
 			setLnurlWithdrawal(data.lnurl)
+		}
+	}
+
+	const onPayKolliderUser = async () => {
+		let amount = lnurlWithdrawalAmount.toString()
+		let username = receipientUsername;
+		let currency = selectedWallet ? selectedWallet : "BTC";
+		if (!currency) return
+		try {
+			const res = await postRequest(API_NAMES.PAY, [], { paymentRequest: invoice, currency: currency, amount: amount, receipient: username });
+			if (res.success) {
+				displayToast(`Successfully send payment to ${username}`, {
+					type: 'success',
+					level: TOAST_LEVEL.INFO,
+					toastId: 'copy-invoice',
+				});
+				storeDispatch(setView(VIEWS.OVERVIEW))
+			} else {
+				let text = `Payment Failed: ${res.error}`
+				displayToast(text, {
+					type: 'error',
+					level: TOAST_LEVEL.CRITICAL,
+					toastId: 'copy-invoice',
+				});
+			}
+		} catch (err) {
+			console.log(err);
 		}
 	}
 
@@ -182,11 +221,21 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	}, [amount, balance])
 
 	const onManual = () => {
-		if (isLnurlWithdrawal) {
-			setIsLnurlWithdrawal(false)
-		} else {
-			setIsLnurlWithdrawal(true)
-		}
+		setIsPayUser(false)
+		setIsLnurlWithdrawal(false)
+		setIsPayManual(true)
+	}
+
+	const onPayUser = () => {
+		setIsLnurlWithdrawal(false);
+		setIsPayManual(false);
+		setIsPayUser(true);
+	}
+
+	const onLnurlWithdrawal = () => {
+		setIsPayManual(false);
+		setIsPayUser(false);
+		setIsLnurlWithdrawal(true)
 	}
 
 	const onMaxAmount = () => {
@@ -204,7 +253,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	return (
 		<div>
 			{
-				isLnurlWithdrawal ? (
+				isLnurlWithdrawal || isPayUser ? (
 					<div>
 						<div className="text-left mt-8">
 							<div className="">
@@ -218,7 +267,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 									) : (
 										<div>
 											<div className="font-light">
-												Amount you want to send
+												Amount you want to send {btcUnit}
 											</div>
 											<div className="border border-1 mt-1 rounded-md w-full border-gray-600">
 												<input
@@ -230,8 +279,41 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 													className="input-default inline-block w-full rounded-md h-14 bg-gray-700"
 												/>
 											</div>
+											{
+												isPayUser && (
+													<div>
+														<div className="mt-2 font-light text-md">Username </div>
+														<div className="border border-1 mt-1 rounded-md w-full border-gray-600">
+															<input
+																value={receipientUsername}
+																onInput={e => setReceipientUsername(e.target.value)}
+																placeholder="Kollider username"
+																type="text"
+																style={{ textAlign: 'left' }}
+																className="input-default inline-block w-full rounded-md h-14 bg-gray-700"
+															/>
+														</div>
+													</div>
+												)
+											}
 											<div className="w-full flex flex-row">
 												<div className="border border-gray-600 rounded-md px-2 py-1 w-12 mt-2 cursor-pointer" onClick={() => onMaxAmount()}>Max</div>
+												{
+													isLnurlWithdrawal ? (
+
+														<div className="border border-gray-600 flex rounded-md px-2 py-1 w-36 mt-2 cursor-pointer ml-2" onClick={() => onPayUser()}>
+															<div className="mx-auto">
+																Pay Username
+															</div>
+														</div>
+													) : (
+														<div className="border border-gray-600 flex rounded-md px-2 py-1 w-36 mt-2 cursor-pointer ml-2" onClick={() => onLnurlWithdrawal()}>
+															<div className="mx-auto">
+																Pay Lnurl
+															</div>
+														</div>
+													)
+												}
 												<div className="border border-gray-600 flex rounded-md px-2 py-1 w-24 mt-2 cursor-pointer ml-2" onClick={() => onManual()}>
 													<div className="mx-auto">
 														Manual
@@ -251,14 +333,14 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 								<div className="font-light">
 									Send To
 								</div>
-								<div className="border border-2 mt-1 rounded-md w-full">
+								<div className="border mt-1 rounded-md w-full border-gray-600">
 									<input
 										value={invoice}
 										onInput={e => setInvoice(e.target.value)}
 										placeholder="Paste you invoice here."
 										type="text"
 										style={{ textAlign: 'left' }}
-										className="input-default inline-block w-full border rounded-md border-transparent h-14"
+										className="input-default inline-block w-full rounded-md border-transparent h-14 bg-gray-700"
 									/>
 								</div>
 								<div className="mt-2 px-2">Max Amount to send: {maxAmountSend} BTC</div>
@@ -292,7 +374,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 						</div>
 
 						<div className="w-full flex">
-							<div className="m-auto border bg-yellow-400 text-white flex rounded-md px-2 py-1 mt-2 cursor-pointer ml-2" onClick={() => onManual()}>
+							<div className="m-auto border border-gray-600 text-gray-400 font-light hover:bg-gray-700 flex rounded-md px-2 py-1 mt-2 cursor-pointer ml-2" onClick={() => onLnurlWithdrawal()}>
 								<div className="mx-auto">
 									Lnurl Withdrawal
 								</div>
@@ -304,22 +386,49 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				{
 					hasSufficienFunds ? (
-						<button
-							onClick={() => { !isLnurlWithdrawal ? onPayInvoice() : onCreateLnurlWithdrawal() }}
-							className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
-							<div className="flex flex-row">
-								<div className="mx-auto w-32 flex">
-									{
-										isLnurlWithdrawal ? (
 
-											<div className="mx-auto">Create</div>
-										) : (
-											<div className="mx-auto">Pay</div>
-										)
-									}
-								</div>
-							</div>
-						</button>
+						<div>
+							{
+								isLnurlWithdrawal && (
+									<button
+										onClick={() => { onCreateLnurlWithdrawal()}}
+										className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+										<div className="flex flex-row">
+											<div className="mx-auto w-32 flex">
+												<div className="mx-auto">Create</div>
+											</div>
+										</div>
+									</button>
+
+								)
+							},
+							{
+								isPayUser && (
+									<button
+										onClick={() => { onPayKolliderUser()}}
+										className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+										<div className="flex flex-row">
+											<div className="mx-auto w-32 flex">
+												<div className="mx-auto">Pay</div>
+											</div>
+										</div>
+									</button>
+								)
+							}
+							{
+								isPayManual && (
+									<button
+										onClick={() => { onPayInvoice() }}
+										className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+										<div className="flex flex-row">
+											<div className="mx-auto w-32 flex">
+												<div className="mx-auto">Pay Invoice</div>
+											</div>
+										</div>
+									</button>
+								)
+							}
+						</div>
 					) : (
 						<button
 							// onClick={}

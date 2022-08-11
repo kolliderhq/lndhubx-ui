@@ -208,6 +208,8 @@ const API: I_API = {
 			createBody: params => ({
 				payment_request: params.paymentRequest,
 				currency: params.currency,
+				amount: params?.amount,
+				receipient: params?.receipient,
 			}),
 			customOptions: {
 				...postOptions,

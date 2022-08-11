@@ -176,7 +176,7 @@ const TableCell = ({ tx }) => {
 
 	}, [tx])
 	return (
-		<div className="h-16 border-gray-600 border-2 hover:bg-gray-700 rounded-lg mt-2">
+		<div className="h-16 border-gray-600 border hover:bg-gray-700 rounded-lg mt-2">
 			<div className="flex grid grid-cols-2 h-full">
 				<div className="my-auto ml-4 flex">
 					<div className="my-auto">
@@ -204,14 +204,14 @@ const TableCell = ({ tx }) => {
 				{
 					action === "Swap" && outgoingSwap && (
 						<div className="my-auto text-red-400">
-							- {roundDecimal(Number(tx.outboundAmount), 8)}
+							-{roundDecimal(Number(tx.outboundAmount), 8)}
 						</div>
 					)
 				}
 				{
 					action === "Swap" && !outgoingSwap && (
 						<div className="my-auto text-green-400">
-							+ {roundDecimal(Number(tx.inboundAmount), 8)}
+							+{roundDecimal(Number(tx.inboundAmount), 8)}
 						</div>
 					)
 				}

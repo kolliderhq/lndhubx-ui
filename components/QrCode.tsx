@@ -26,7 +26,7 @@ export function QrCode({
 	return (
 		<div className={cn(wrapperClass)}>
 			<a ref={ref} download target="_blank" href={`lightning:${value}`} rel="noreferrer">
-				<QRCodeSVG size={size} value={value} imageSettings={imageSettings} includeMargin={false} />
+				<QRCodeSVG size={size} level='M' value={value} imageSettings={imageSettings} includeMargin={false} />
 			</a>
 		</div>
 	);

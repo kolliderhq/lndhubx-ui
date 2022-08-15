@@ -70,10 +70,10 @@ export const Receive = () => {
 				{
 					invoice ? (
 						<div className="flex flex-col h-full w-full">
-							<div className="mx-auto mt-10 border border-gray-600 rounded-xl p-2" onClick={() => onQrCodeClick()}>
+							<div className="mx-auto mt-10 border bg-white rounded-xl p-2" onClick={() => onQrCodeClick()}>
 								<QrCode value={invoice} wrapperClass={"border-radius: 32px"} size={256} imageSettings={{ src: UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase()), x: null, y: null, height: 48, width: 48, excavate: true }} />
 							</div>
-							<button className="h-12 w-32 border mx-auto rounded-lg mt-8 border-gray-600" onClick={() => onQrCodeClick()}>
+							<button className="h-12 w-32 border mx-auto rounded-lg mt-8 border-gray-600 text-white" onClick={() => onQrCodeClick()}>
 								Copy
 							</button>
 						</div>
@@ -122,7 +122,7 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => onCreateInvoice(amount, memo)}
-					className="border-gray-600 border-2 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3 text-white">
 					<p>Create Invoice</p>
 				</button>
 			</div>

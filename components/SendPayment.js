@@ -260,7 +260,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 								{
 									lnurlWithdrawal ? (
 										<div className="flex w-full">
-											<div className="m-auto border border-gray-600 rounded-lg p-2">
+											<div className="m-auto border bg-white rounded-lg p-2">
 												<QrCode value={lnurlWithdrawal} wrapperClass={"border-radius: 32px"} size={256} imageSettings={{ src: UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase()), x: null, y: null, height: 48, width: 48, excavate: true }} />
 											</div>
 										</div>
@@ -394,21 +394,21 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 										onClick={() => { onCreateLnurlWithdrawal()}}
 										className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 										<div className="flex flex-row">
-											<div className="mx-auto w-32 flex">
+											<div className="mx-auto w-32 flex text-white">
 												<div className="mx-auto">Create</div>
 											</div>
 										</div>
 									</button>
 
 								)
-							},
+							}
 							{
 								isPayUser && (
 									<button
 										onClick={() => { onPayKolliderUser()}}
 										className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 										<div className="flex flex-row">
-											<div className="mx-auto w-32 flex">
+											<div className="mx-auto w-32 flex text-white">
 												<div className="mx-auto">Pay</div>
 											</div>
 										</div>

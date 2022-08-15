@@ -202,10 +202,11 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		if (!newQuote) return
 		setQuote(newQuote);
 		setFiatAmount(roundDecimal(amount / Number(newQuote.rate), 8))
+		const networkFee = 0.005;
 		if (currency !== "BTC") {
-			setMaxAmountSend(roundDecimal(balance * Number(quote.rate), 8))
+			setMaxAmountSend(roundDecimal(balance * Number(quote.rate) * (1 - networkFee), 8))
 		} else {
-			setMaxAmountSend(roundDecimal(balance, 8))
+			setMaxAmountSend(roundDecimal(balance * (1 - networkFee), 8))
 		}
 	}, [newQuote])
 
@@ -421,7 +422,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 										onClick={() => { onPayInvoice() }}
 										className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 										<div className="flex flex-row">
-											<div className="mx-auto w-32 flex">
+											<div className="mx-auto w-32 flex text-white">
 												<div className="mx-auto">Pay Invoice</div>
 											</div>
 										</div>

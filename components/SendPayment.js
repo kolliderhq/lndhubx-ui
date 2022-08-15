@@ -202,11 +202,11 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		if (!newQuote) return
 		setQuote(newQuote);
 		setFiatAmount(roundDecimal(amount / Number(newQuote.rate), 8))
-		const networkFee = 0.005;
+		const networkFee = 0.01;
 		if (currency !== "BTC") {
 			setMaxAmountSend(roundDecimal(balance * Number(quote.rate) * (1 - networkFee), 8))
 		} else {
-			setMaxAmountSend(roundDecimal(balance * (1 - networkFee), 8))
+			setMaxAmountSend(roundDecimal(balance - (max(balance * 100000000 * networkFee, 1) / 100000000), 8))
 		}
 	}, [newQuote])
 

@@ -240,7 +240,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	}
 
 	const onMaxAmount = () => {
-		setLnurlWithdrawalAmount(balance * 0.995)
+		setLnurlWithdrawalAmount(balance * 0.99)
 	}
 
 	useEffect(() => {

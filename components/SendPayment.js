@@ -142,7 +142,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 
 
 	const onCreateLnurlWithdrawal = async () => {
-		let amount = lnurlWithdrawalAmount.toString()
+		let amount = selectedWallet == "BTC" ? (lnurlWithdrawalAmount / 100000000).toString() : lnurlWithdrawalAmount.toString()
 		let currency = selectedWallet ? selectedWallet : "BTC";
 		const data = await getRequest(API_NAMES.CREATE_LNURL_WITHDRAWAL, [amount, currency])
 		if (data.error) {
@@ -163,7 +163,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		let currency = selectedWallet ? selectedWallet : "BTC";
 		if (!currency) return
 		try {
-			const res = await postRequest(API_NAMES.PAY, [], { paymentRequest: invoice, currency: currency, amount: amount, receipient: username });
+			const res = await postRequest(API_NAMES.PAY, [], { paymentRequest: invoice, currency: currency, amount: currency === "BTC" ? (amount/100000000).toFixed(8) : amount, receipient: username });
 			if (res.success) {
 				displayToast(`Successfully send payment to ${username}`, {
 					type: 'success',
@@ -206,7 +206,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		if (currency !== "BTC") {
 			setMaxAmountSend(roundDecimal(balance * Number(quote.rate) * (1 - networkFee), 8))
 		} else {
-			setMaxAmountSend(roundDecimal(balance - (max(balance * 100000000 * networkFee, 1) / 100000000), 8))
+			setMaxAmountSend(roundDecimal(balance * 100000000 - (balance * 100000000 * networkFee), 2))
 		}
 	}, [newQuote])
 
@@ -240,7 +240,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	}
 
 	const onMaxAmount = () => {
-		setLnurlWithdrawalAmount(balance * 0.99)
+		setLnurlWithdrawalAmount(currency === "BTC" ? balance * 100000000 * 0.99 : balance * 0.99)
 	}
 
 	useEffect(() => {
@@ -344,14 +344,14 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 										className="input-default inline-block w-full rounded-md border-transparent h-14 bg-gray-700"
 									/>
 								</div>
-								<div className="mt-2 px-2">Max Amount to send: {maxAmountSend} BTC</div>
+								<div className="mt-2 px-2">Max Amount to send: {maxAmountSend} sats</div>
 							</div>
 						</div>
 						<div className="grid grid-cols-2 gap-2 mt-2 p-4 font-light">
 							<div className="text-left w-full">Amount</div>
 							<div className="text-right w-full">
 								<div>
-									{amount} BTC
+									{amount*100000000} sats
 								</div>
 								{
 									currency !== "BTC" && (
@@ -363,7 +363,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 							<div className="text-left w-full">Max Fee</div>
 							<div className="text-right w-full">
 								<div>
-									{roundDecimal(maxFee, 8)} BTC
+									{roundDecimal(maxFee*100000000, 2)} sats
 								</div>
 								{
 									currency !== "BTC" && (
@@ -477,7 +477,7 @@ const DropDown = () => {
 				</div>
 				<div className="grid justify-items-end">
 					<div className="flex">
-						<div>{walletBalance}</div>
+						<div>{selectedWallet == "BTC" ? walletBalance*100000000 : walletBalance}</div>
 						<div className="my-auto text-2xl">
 							<MdOutlineArrowDropDown className="text-right" />
 						</div>

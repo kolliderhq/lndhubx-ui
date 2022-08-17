@@ -45,7 +45,7 @@ export default function useTxWatcher() {
 								{/* <div className="">
 									<Img src={UI.RESOURCES.getCurrencySymbol(tx.inboundCurrency.toLowerCase())} className="h-6 w-6" />
 								</div> */}
-								<p>{` Received ${roundDecimal(tx.inboundAmount, 8)} ${tx.inboundCurrency} deposit! 💸`}</p>
+								<p>{` Received ${tx.inboundCurrency == "BTC" ? roundDecimal(Number(tx.inboundAmount*100000000).toString(), 2) : roundDecimal(tx.inboundAmount, 8)} ${tx.inboundCurrency === "BTC" ? "sats" : tx.inboundCurrency} deposit! 💸`}</p>
 							</div>,
 							{
 								type: 'info',
@@ -61,7 +61,7 @@ export default function useTxWatcher() {
 								{/* <div className="">
 									<Img src={UI.RESOURCES.getCurrencySymbol(tx.inboundCurrency.toLowerCase())} className="h-6 w-6" />
 								</div> */}
-								<p>{`Send ${roundDecimal(tx.outboundAmount, 8)} ${tx.outboundCurrency} successfully! 💸`}</p>
+								<p>{`Send ${tx.outboundCurrency == "BTC" ? roundDecimal(Number(tx.outboundAmount*100000000).toString(), 2) : roundDecimal(tx.outboundAmount, 8)} ${tx.outboundCurrency === "BTC" ? "sats" : tx.outboundCurrency} successfully! 💸`}</p>
 							</div>,
 							{
 								type: 'info',

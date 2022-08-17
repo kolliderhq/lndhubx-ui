@@ -25,12 +25,12 @@ export const ConvertFunds = () => {
 
 	const onSwap = async ({ fromCurrency, fromAmount, toCurrency, toAmount }) => {
 
-		const res = await postRequest(API_NAMES.SWAP, [], { fromCurrency: fromCurrency, toCurrency: toCurrency, amount: fromAmount });
+		const res = await postRequest(API_NAMES.SWAP, [], { fromCurrency: fromCurrency, toCurrency: toCurrency, amount: fromCurrency === "BTC" ? (fromAmount / 100000000).toFixed(8) : fromAmount });
 
 		setSwapObj({
 			fromCurrency: fromCurrency,
 			toCurrency: toCurrency,
-			fromAmount: fromAmount,
+			fromAmount: fromCurrency === "BTC" ? (fromAmount/100000000).toFixed(8) : fromAmount,
 			toAmount: roundDecimal(Number(res.amount) * Number(res.rate), 8)
 		})
 
@@ -77,7 +77,7 @@ const SwapForm = ({ onSwap }) => {
 	const [lastQuote, setLastQuote] = useState(0);
 
 
-	const { data: quote } = useSWR(fromAmount !== 0 && fromCurrency !== toCurrency ? [API_NAMES.QUOTE, fromCurrency, toCurrency, fromAmount] : null);
+	const { data: quote } = useSWR(fromAmount !== 0 && fromCurrency !== toCurrency ? [API_NAMES.QUOTE, fromCurrency, toCurrency, fromCurrency === "BTC" ? (fromAmount/100000000).toFixed() : fromAmount] : null);
 
 	const [fromBalance, setFromBalance] = useState(0);
 
@@ -99,8 +99,16 @@ const SwapForm = ({ onSwap }) => {
 	}, [fromCurrency, toCurrency, availableWallets])
 
 	useMemo(() => {
-		let n = fixed(lastQuote * fromAmount, 8)
-		setToAmount(n)
+		if (fromCurrency === "BTC") {
+			let n = fixed(lastQuote * fromAmount / 100000000, 2)
+			setToAmount(n)
+		} else if (toCurrency === "BTC") {
+			let n = fixed(lastQuote * fromAmount * 100000000, 2)
+			setToAmount(n)
+		} else {
+			let n = fixed(lastQuote * fromAmount, 8)
+			setToAmount(n)
+		}
 	}, [fromCurrency, toCurrency, fromAmount, lastQuote])
 
 	useEffect(() => {
@@ -114,7 +122,7 @@ const SwapForm = ({ onSwap }) => {
 	}
 
 	const onFillMaxAmount = () => {
-		setFromAmount((Math.floor(fromBalance * 10000000) / 10000000).toString())
+		setFromAmount(fromCurrency === "BTC" ? Math.floor(fromBalance * 100000000) : fromBalance).toString()
 	}
 
 	const onSwapToFrom = () => {
@@ -142,7 +150,7 @@ const SwapForm = ({ onSwap }) => {
 							<DropDown setCurrency={setFromCurrency} currency={fromCurrency} availableCurrencies={availableWallets} />
 						</div>
 					</div>
-					<div className="text-xs mt-2 cursor-pointer" onClick={() => onFillMaxAmount()}>{CURRENCY_SYMBOL_MAP[fromCurrency]} {fromBalance} available</div>
+					<div className="text-xs mt-2 cursor-pointer" onClick={() => onFillMaxAmount()}>{fromCurrency !== "BTC" ? CURRENCY_SYMBOL_MAP[fromCurrency] : ""} {fromCurrency === "BTC" ? fromBalance * 100000000 : fromBalance} {fromCurrency === "BTC" ? "sats" : ""} available</div>
 				</div>
 				<div className="text-4xl flex mt-4">
 					<div className="mx-auto cursor-pointer" onClick={() => onSwapToFrom()}>

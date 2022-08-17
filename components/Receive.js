@@ -93,7 +93,7 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 		<div>
 			<div className="text-left mt-8">
 				<div className="">
-					Amount <span className="text-xs">(in {currency})</span>
+					Amount <span className="text-xs">(in {currency === "BTC" ? "sats" : currency})</span>
 					<div className="border border-1 mt-1 rounded-md w-full border-gray-600">
 						<input
 							value={amount}
@@ -121,7 +121,7 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 			</div>
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
-					onClick={() => onCreateInvoice(amount, memo)}
+					onClick={() => onCreateInvoice(currency === "BTC" ? amount/100000000 : amount, memo)}
 					className="border-gray-600 border-2 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3 text-white">
 					<p>Create Invoice</p>
 				</button>

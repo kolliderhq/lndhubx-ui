@@ -111,7 +111,7 @@ const AccountListItem = (currency, wallet) => {
 				<div className="flex justify-end my-auto">
 					<p className="truncate ... text-xl mr-4">
 						{
-							roundDecimal(wallet.balance, currency !== 'BTC' ? 2: 8)
+							currency === "BTC" ? roundDecimal(wallet.balance*100000000, 2) : roundDecimal(wallet.balance, 2)
 						}
 					</p>
 				</div>

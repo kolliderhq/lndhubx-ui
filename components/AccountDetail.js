@@ -47,7 +47,7 @@ export const AccountDetail = () => {
 					<Img src={UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase())} className="h-10 w-10" />
 					<div className="text-2xl my-auto ml-4">{selectedWallet}</div>
 				</div>
-				<div className="text-2xl my-auto text-left mt-6">{walletBalance}</div>
+				<div className="text-2xl my-auto text-left mt-6">{selectedWallet == "BTC" ? walletBalance*100000000 : walletBalance}</div>
 				<div className="flex flex-row mt-6">
 					<div className="m-auto">
 						<button className="border rounded-lg border-gray-600 px-8 py-2 w-40 flex" onClick={() => storeDispatch(setView(VIEWS.SEND))}>
@@ -190,28 +190,28 @@ const TableCell = ({ tx }) => {
 				{
 					action === "Received" && (
 						<div className="my-auto text-green-400">
-							+{roundDecimal(Number(tx.inboundAmount), 8)}
+							+{tx.inboundCurrency === tx.outboundCurrency ? roundDecimal(Number(tx.inboundAmount*100000000), 2) : roundDecimal(Number(tx.inboundAmount), 8)}
 						</div>
 					)
 				}
 				{
 					action === "Send" && (
 						<div className="my-auto text-red-400">
-							-{roundDecimal(Number(tx.outboundAmount), 8)}
+							-{tx.inboundCurrency === tx.outboundCurrency ? roundDecimal(Number(tx.outboundAmount*100000000), 2) : roundDecimal(Number(tx.outboundAmount), 8)}
 						</div>
 					)
 				}
 				{
 					action === "Swap" && outgoingSwap && (
 						<div className="my-auto text-red-400">
-							-{roundDecimal(Number(tx.outboundAmount), 8)}
+							-{tx.inboundCurrency === tx.outboundCurrency ? roundDecimal(Number(tx.outboundAmount*100000000), 2) : roundDecimal(Number(tx.outboundAmount), 8)}
 						</div>
 					)
 				}
 				{
 					action === "Swap" && !outgoingSwap && (
 						<div className="my-auto text-green-400">
-							+{roundDecimal(Number(tx.inboundAmount), 8)}
+							+{tx.inboundCurrency === tx.outboundCurrency ? roundDecimal(Number(tx.inboundAmount*100000000), 2): roundDecimal(Number(tx.inboundAmount), 8)}
 						</div>
 					)
 				}

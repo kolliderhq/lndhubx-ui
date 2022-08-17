@@ -1,4 +1,6 @@
 import React from 'react';
+import { BsTelegram } from 'react-icons/bs';
+import { FaDiscord } from 'react-icons/fa';
 
 export const Footer = () => {
 	return (
@@ -22,7 +24,14 @@ export const Footer = () => {
 							</div>
 						</a>
 					</div>
-					<div></div>
+					<div className="mr-8 text-2xl flex flex-row m-auto">
+						<div className="cursor-pointer" onClick={() => window.open('https://t.me/kolliderhq')}>
+							<BsTelegram/>
+						</div>
+						<div className="ml-4 cursor-pointer" onClick={() => window.open('https://discord.gg/hETW6yDS')}>
+							<FaDiscord/>
+						</div>
+					</div>
 				</div>
 			</div>
 		</footer>

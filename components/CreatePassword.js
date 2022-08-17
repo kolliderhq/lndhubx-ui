@@ -70,7 +70,7 @@ export const CreatePassword = () => {
 										value={password}
 										onInput={e => setPassword(e.target.value)}
 										placeholder="Password"
-										type="text"
+										type="password"
 										style={{ textAlign: 'left' }}
 										className="input-default inline-block w-full border rounded-md border-transparent h-12 bg-gray-700"
 									/>
@@ -83,7 +83,7 @@ export const CreatePassword = () => {
 										value={repeatPassword}
 										onInput={e => setRepeatPassword(e.target.value)}
 										placeholder="Repeat Password"
-										type="text"
+										type="password"
 										style={{ textAlign: 'left' }}
 										className="input-default inline-block w-full border rounded-md border-transparent h-12 bg-gray-700"
 										onKeyDown={onEnter}
@@ -100,7 +100,7 @@ export const CreatePassword = () => {
 							<button
 								disabled={!isPasswordValid}
 								onClick={() => onCreate()}
-								className={cn("border-gray-600 hover:bg-gray-800 hover:text-white cursor-pointer border rounded-lg w-2/3 px-5 py-2", !isPasswordValid ? 'disabled:opacity-75 hover:bg-white hover:text-gray-700' : 'border-gray-600')}>
+								className={cn("border-gray-600 hover:bg-gray-800 text-white cursor-pointer border rounded-lg w-2/3 px-5 py-2", !isPasswordValid ? 'disabled:opacity-75 hover:bg-white hover:text-gray-700' : 'border-gray-600')}>
 								<p>Create Account</p>
 							</button>
 						</div>

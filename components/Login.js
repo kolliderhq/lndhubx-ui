@@ -63,6 +63,7 @@ export const Login = () => {
 									<input
 										value={username}
 										onInput={e => setUsername(e.target.value)}
+										onKeyDown={onEnter}
 										placeholder="Enter your username"
 										type="text"
 										style={{ textAlign: 'left' }}

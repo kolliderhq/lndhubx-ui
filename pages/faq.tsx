@@ -24,7 +24,7 @@ export default function FAQ() {
 						<h1>FAQ</h1>
 					</div>
 				</div>
-				<div className="grid grid-cols-2 gap-24 mt-8 mx-auto w-full">
+				<div className="grid lg:grid-cols-2 grid-cols-1 gap-24 mt-8 mx-auto w-full">
 					<div className="">
 						<div className="flex">
 							<div className="cursor-pointer flex" onClick={() => onOpenTab("tab1")}>

@@ -21,13 +21,16 @@ import { Login } from '../components/Login';
 import { Receive } from '../components/Receive';
 import { Settings } from '../components/Settings';
 import { Welcome } from '../components/Welcome';
+import { displayToast, TOAST_LEVEL } from 'utils/toast';
 
 export default function Home() {
-	const [selectedView, isLoggedIn] = useAppSelector(state => [
+	const [selectedView, isLoggedIn, allowedIp] = useAppSelector(state => [
 		state.layout.selectedView,
-		state.payments.paymentInTransit,
 		state.connection.isLoggedIn,
+		state.misc.allowedIp
 	]);
+
+	const [disableUi, setDisableUi] = useState(false);
 
 	useEffect(() => {
 		if (!isLoggedIn) {
@@ -36,6 +39,17 @@ export default function Home() {
 			storeDispatch(setView(VIEWS.OVERVIEW));
 		}
 	}, [isLoggedIn]);
+
+	useEffect(() => {
+		if (allowedIp === false) {
+			// displayToast
+			// 	displayToast(<p>You're accessing Kollider Pay from an origin that don't comply with our terms of serivce.</p>, {
+			// 	type: 'error',
+			// 	level: TOAST_LEVEL.CRITICAL,
+			// });
+			setDisableUi(true)
+		}
+	}, [allowedIp])
 
 	useTxWatcher();
 
@@ -48,21 +62,31 @@ export default function Home() {
 				<div className="flex h-full">
 					<div className="bg-white font-semibold mx-auto text-center rounded-3xl h-128 w-128 shadow-2xl shadow-indigo-500/50 bg-gradient-to-r from-purple-500 to-pink-500 p-1">
 						<div className="w-full h-full bg-gray-800 rounded-3xl">
-							<div className="h-full">
-								{selectedView === VIEWS.WELCOME && <Welcome />}
-								{selectedView === VIEWS.LOGIN && <Login />}
-								{selectedView === VIEWS.CREATE && <Create />}
-								{selectedView === VIEWS.CREATE_PASSWORD && <CreatePassword />}
-								{selectedView === VIEWS.INFO && <Info />}
+								{/* {
+									disableUi? (
+										<div className="flex h-full">
+											<div className="m-auto text-center p-6">
+											Unfortunately Kollider Pay is not available in your country. 😔
+											</div>
+										</div>
+									): ( */}
+										<div className="h-full">
+									{selectedView === VIEWS.WELCOME && <Welcome />}
+									{selectedView === VIEWS.LOGIN && <Login />}
+									{selectedView === VIEWS.CREATE && <Create />}
+									{selectedView === VIEWS.CREATE_PASSWORD && <CreatePassword />}
+									{selectedView === VIEWS.INFO && <Info />}
 
-								{selectedView === VIEWS.ACCOUNT_DETAIL && <AccountDetail />}
-								{selectedView === VIEWS.RECEIVE && <Receive />}
-								{selectedView === VIEWS.OVERVIEW && <Overview />}
-								{selectedView === VIEWS.SEND && <SendPayment />}
-								{selectedView === VIEWS.CONVERT && <ConvertFunds />}
-								{selectedView === VIEWS.SETTINGS && <Settings />}
+									{selectedView === VIEWS.ACCOUNT_DETAIL && <AccountDetail />}
+									{selectedView === VIEWS.RECEIVE && <Receive />}
+									{selectedView === VIEWS.OVERVIEW && <Overview />}
+									{selectedView === VIEWS.SEND && <SendPayment />}
+									{selectedView === VIEWS.CONVERT && <ConvertFunds />}
+									{selectedView === VIEWS.SETTINGS && <Settings />}
+										</div>
+									{/* )
+								} */}
 							</div>
-						</div>
 					</div>
 				</div>
 			</div>

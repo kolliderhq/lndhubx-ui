@@ -15,10 +15,10 @@ export default function FAQ() {
 	}
 
 	return (
-		<div className="w-full bg-gradient-to-b from-gray-900 via-purple-900 to-violet-600 h-screen flex flex-col">
+		<div className="w-full bg-gradient-to-b from-gray-900 via-purple-900 to-violet-600 flex flex-col h-screen overflow-auto">
 			<Header/>
 			<div className="w-2/3 mx-auto h-full">
-			<div className="flex flex-col fixed relative">
+			<div className="flex flex-col fixed relative overflow-auto">
 				<div className="w-full flex">
 					<div className="mx-auto">
 						<h1>FAQ</h1>

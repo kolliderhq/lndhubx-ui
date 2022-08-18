@@ -190,28 +190,28 @@ const TableCell = ({ tx }) => {
 				{
 					action === "Received" && (
 						<div className="my-auto text-green-400">
-							+{tx.inboundCurrency === tx.outboundCurrency ? roundDecimal(Number(tx.inboundAmount*100000000), 2) : roundDecimal(Number(tx.inboundAmount), 8)}
+							+{selectedWallet === "BTC" ? roundDecimal(Number(tx.inboundAmount*100000000), 2) : roundDecimal(Number(tx.inboundAmount), 8)}
 						</div>
 					)
 				}
 				{
 					action === "Send" && (
 						<div className="my-auto text-red-400">
-							-{tx.inboundCurrency === tx.outboundCurrency ? roundDecimal(Number(tx.outboundAmount*100000000), 2) : roundDecimal(Number(tx.outboundAmount), 8)}
+							-{selectedWallet === "BTC" ? roundDecimal(Number(tx.outboundAmount*100000000), 2) : roundDecimal(Number(tx.outboundAmount), 8)}
 						</div>
 					)
 				}
 				{
 					action === "Swap" && outgoingSwap && (
 						<div className="my-auto text-red-400">
-							-{tx.inboundCurrency === tx.outboundCurrency ? roundDecimal(Number(tx.outboundAmount*100000000), 2) : roundDecimal(Number(tx.outboundAmount), 8)}
+							-{selectedWallet === "BTC" ? roundDecimal(Number(tx.outboundAmount*100000000), 2) : roundDecimal(Number(tx.outboundAmount), 8)}
 						</div>
 					)
 				}
 				{
 					action === "Swap" && !outgoingSwap && (
 						<div className="my-auto text-green-400">
-							+{tx.inboundCurrency === tx.outboundCurrency ? roundDecimal(Number(tx.inboundAmount*100000000), 2): roundDecimal(Number(tx.inboundAmount), 8)}
+							+{selectedWallet === "BTC" ? roundDecimal(Number(tx.inboundAmount*100000000), 2): roundDecimal(Number(tx.inboundAmount), 8)}
 						</div>
 					)
 				}

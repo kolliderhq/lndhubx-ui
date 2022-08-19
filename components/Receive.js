@@ -12,15 +12,20 @@ import { getRequest } from "utils/api";
 import { QrCode } from "./QrCode";
 import { roundDecimal } from "utils/format";
 import { displayToast, TOAST_LEVEL } from "utils/toast";
+import { FormatCurrency, FormatCurrencyInput } from "./Currency";
 
 export const Receive = () => {
 	const [invoice, setInvoice] = useState("");
 	const [selectedWallet] = useAppSelector(state => [state.wallets.selectedWallet])
+	const [isSats, setIsSats] = useState(true);
 
 	// useEffect(() => {
 	// }, [selectedWallet])
 
 	const onCreateInvoice = async (amount, memo) => {
+		if (isSats && selectedWallet === "BTC") {
+			amount = amount / 100000000
+		}
 		amount = amount.toString()
 		let currency = selectedWallet ? selectedWallet : "BTC";
 		const data = await getRequest(API_NAMES.ADD_INVOICE, [amount, currency, memo])
@@ -93,16 +98,9 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 		<div>
 			<div className="text-left mt-8">
 				<div className="">
-					Amount <span className="text-xs">(in {currency})</span>
+					Amount <span className="text-xs">(in {currency === "BTC" ? "sats" : currency})</span>
 					<div className="border border-1 mt-1 rounded-md w-full border-gray-600">
-						<input
-							value={amount}
-							onInput={e => setAmount(e.target.value)}
-							placeholder=""
-							type="number"
-							style={{ textAlign: 'left' }}
-							className="input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"
-						/>
+						<FormatCurrencyInput value={amount} symbol={currency} style={"input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"} onValueChange={(values) => setAmount(values.value)}/>
 					</div>
 				</div>
 				<div className="mt-8">
@@ -139,7 +137,7 @@ const DropDown = ({ resetInovice }) => {
 
 	useEffect(() => {
 		let balance = wallets[selectedWallet] ? wallets[selectedWallet].balance : 0;
-		setWalletBalance(roundDecimal(balance, 8))
+		setWalletBalance(balance)
 	}, [wallets, selectedWallet]);
 
 	const onClickDropDown = () => {
@@ -161,7 +159,9 @@ const DropDown = ({ resetInovice }) => {
 				</div>
 				<div className="grid justify-items-end">
 					<div className="flex">
-						<div>{walletBalance}</div>
+						<div>
+							<FormatCurrency value={walletBalance} symbol={selectedWallet} style={"bg-transparent w-full truncate ... text-right"}/>
+						</div>
 						<div className="my-auto text-2xl">
 							<MdOutlineArrowDropDown className="text-right" />
 						</div>
@@ -199,7 +199,10 @@ const Dropped = ({ onClickDropDown }) => {
 
 						<div className="grid justify-items-end w-full">
 							<div className="flex">
-								<div>{wallets[currency] ? roundDecimal(wallets[currency].balance, 8) : 0}</div>
+								<div>
+									{/* {wallets[currency] ? roundDecimal(wallets[currency].balance, 8) : 0} */}
+									<FormatCurrency value={wallets[currency].balance} symbol={currency} style={"bg-transparent w-full text-right truncate ..."}/>
+								</div>
 							</div>
 						</div>
 					</div>

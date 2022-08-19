@@ -13,6 +13,8 @@ import useSWR from "swr"
 import { API_NAMES } from "consts"
 import { formatDayHour } from "utils/time"
 import cn from 'clsx';
+import CurrencyFormat from "react-currency-format";
+import {FormatCurrency} from './Currency';
 
 export const AccountDetail = () => {
 	const [selectedWallet, wallets] = useAppSelector(state => [state.wallets.selectedWallet, state.wallets.wallets])
@@ -31,7 +33,8 @@ export const AccountDetail = () => {
 
 	useEffect(() => {
 		let balance = wallets[selectedWallet] ? wallets[selectedWallet].balance : 0;
-		setWalletBalance(roundDecimal(balance, 8));
+		setWalletBalance(balance);
+		// setWalletBalance(formattedBalance);
 	}, [selectedWallet, wallets])
 	return (
 		<div className="flex flex-col h-full p-8 relative text-white">
@@ -47,7 +50,10 @@ export const AccountDetail = () => {
 					<Img src={UI.RESOURCES.getCurrencySymbol(selectedWallet.toLowerCase())} className="h-10 w-10" />
 					<div className="text-2xl my-auto ml-4">{selectedWallet}</div>
 				</div>
-				<div className="text-2xl my-auto text-left mt-6">{walletBalance}</div>
+				{/* <div className="text-2xl my-auto text-left mt-6">{selectedWallet == "BTC" ? walletBalance*100000000 : walletBalance}</div> */}
+				<div className="text-2xl my-auto text-left mt-6">
+					<FormatCurrency value={walletBalance} symbol={selectedWallet} style={"text-white bg-gray-800 text-4xl w-full"}/>
+				</div>
 				<div className="flex flex-row mt-6">
 					<div className="m-auto">
 						<button className="border rounded-lg border-gray-600 px-8 py-2 w-40 flex" onClick={() => storeDispatch(setView(VIEWS.SEND))}>
@@ -98,7 +104,7 @@ export const AccountDetail = () => {
 const Table = ({ txs }) => {
 	return (
 		<div className="overflow-auto w-full">
-			<div className="w-full h-32">
+			<div className="w-full h-28">
 				{
 					txs.map(tx => (
 						<TableCell tx={tx} />
@@ -189,29 +195,33 @@ const TableCell = ({ tx }) => {
 				</div>
 				{
 					action === "Received" && (
-						<div className="my-auto text-green-400">
-							+{roundDecimal(Number(tx.inboundAmount), 8)}
+						<div className="my-auto text-green-400 flex">
+							{/* +{selectedWallet === "BTC" ? roundDecimal(Number(tx.inboundAmount*100000000), 2) : roundDecimal(Number(tx.inboundAmount), 8)} */}
+							+<FormatCurrency value={tx.inboundAmount} symbol={selectedWallet} style={"bg-transparent w-full truncate ..."}/>
 						</div>
 					)
 				}
 				{
 					action === "Send" && (
-						<div className="my-auto text-red-400">
-							-{roundDecimal(Number(tx.outboundAmount), 8)}
+						<div className="my-auto text-red-400 flex">
+							{/* -{selectedWallet === "BTC" ? roundDecimal(Number(tx.outboundAmount*100000000), 2) : roundDecimal(Number(tx.outboundAmount), 8)} */}
+							-<FormatCurrency value={tx.outboundAmount} symbol={selectedWallet} style={"bg-transparent w-full truncate ..."}/>
 						</div>
 					)
 				}
 				{
 					action === "Swap" && outgoingSwap && (
-						<div className="my-auto text-red-400">
-							-{roundDecimal(Number(tx.outboundAmount), 8)}
+						<div className="my-auto text-red-400 flex">
+							{/* -{selectedWallet === "BTC" ? roundDecimal(Number(tx.outboundAmount*100000000), 2) : roundDecimal(Number(tx.outboundAmount), 8)} */}
+							-<FormatCurrency value={tx.outboundAmount} symbol={selectedWallet} style={"bg-transparent w-full truncate ..."}/>
 						</div>
 					)
 				}
 				{
 					action === "Swap" && !outgoingSwap && (
-						<div className="my-auto text-green-400">
-							+{roundDecimal(Number(tx.inboundAmount), 8)}
+						<div className="my-auto text-green-400 flex">
+							{/* +{selectedWallet === "BTC" ? roundDecimal(Number(tx.inboundAmount*100000000), 2): roundDecimal(Number(tx.inboundAmount), 8)} */}
+							+<FormatCurrency value={tx.inboundAmount} symbol={selectedWallet} style={"bg-transparent w-full truncate ..."}/>
 						</div>
 					)
 				}

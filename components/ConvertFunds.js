@@ -17,21 +17,51 @@ import { CURRENCY_SYMBOL_MAP } from 'consts/misc/currency';
 import { roundDecimal } from 'utils/format';
 import { TOAST_LEVEL, displayToast } from 'utils/toast';
 import { fixed } from 'utils/Big';
+import { FormatCurrency, FormatCurrencyInput } from './Currency';
 
 export const ConvertFunds = () => {
 
 	const [isSwapComplete, setisSwapComplete] = useState(false);
 	const [swapObj, setSwapObj] = useState({ fromCurrency: "BTC", toCurrency: "USD", fromAmount: 0, toAmount: 0 });
+	const [isSats, setIsSats] = useState(true);
+
+	const checkSwapValid = (value, fromCurrency) => {
+		let decimals = {
+			SATS: 0,
+			BTC: 8,
+			USD: 4,
+			EUR: 4,
+			GBP: 4,
+		}
+
+		let dec = decimals[fromCurrency]
+		if (value < Math.pow(10, -dec)) {
+			return false
+		}
+		return true
+	}
 
 	const onSwap = async ({ fromCurrency, fromAmount, toCurrency, toAmount }) => {
 
-		const res = await postRequest(API_NAMES.SWAP, [], { fromCurrency: fromCurrency, toCurrency: toCurrency, amount: fromAmount });
+		if (fromCurrency === "BTC" && isSats) {
+			fromAmount = fromAmount / 100000000;
+		}
+
+		if (!checkSwapValid(fromAmount, fromCurrency)) {
+			displayToast(<p>{`Swap Amount is too small.`}</p>, {
+				type: 'error',
+				level: TOAST_LEVEL.CRITICAL,
+			})
+			return
+		}
+
+		const res = await postRequest(API_NAMES.SWAP, [], { fromCurrency: fromCurrency, toCurrency: toCurrency, amount: fromAmount.toString() });
 
 		setSwapObj({
 			fromCurrency: fromCurrency,
 			toCurrency: toCurrency,
 			fromAmount: fromAmount,
-			toAmount: roundDecimal(Number(res.amount) * Number(res.rate), 8)
+			toAmount: Number(res.amount) * Number(res.rate)
 		})
 
 		if (res.success) {
@@ -70,22 +100,31 @@ export const ConvertFunds = () => {
 
 const SwapForm = ({ onSwap }) => {
 	const [fromAmount, setFromAmount] = useState(0);
+	const [fromAmountNormalised, setFromAmountNormalised] = useState(0);
 	const [toAmount, setToAmount] = useState(0);
 	const [fromCurrency, setFromCurrency] = useState("BTC");
 	const [toCurrency, setToCurrency] = useState("USD");
 	const [availableToCurrencies, setAvailableToCurrencies] = useState([]);
 	const [lastQuote, setLastQuote] = useState(0);
+	const [isSats, setIsSats] = useState(true);
 
-
-	const { data: quote } = useSWR(fromAmount !== 0 && fromCurrency !== toCurrency ? [API_NAMES.QUOTE, fromCurrency, toCurrency, fromAmount] : null);
+	const { data: quote } = useSWR(fromAmount !== 0 && fromCurrency !== toCurrency ? [API_NAMES.QUOTE, fromCurrency, toCurrency, fromAmountNormalised] : null);
 
 	const [fromBalance, setFromBalance] = useState(0);
 
 	const [wallets, availableWallets] = useAppSelector(state => [state.wallets.wallets, state.wallets.availableWallets]);
 
+	const onFromAmountChange = (value) => {
+		if (isSats && fromCurrency === "BTC") {
+			setFromAmountNormalised(value / 100000000);
+		} else {
+			setFromAmountNormalised(value);
+		}
+		setFromAmount(value)
+	}
+
 	useMemo(() => {
 		if (!quote) return
-		console.log(quote)
 		setLastQuote(Number(quote.rate))
 	}, [quote])
 
@@ -99,14 +138,31 @@ const SwapForm = ({ onSwap }) => {
 	}, [fromCurrency, toCurrency, availableWallets])
 
 	useMemo(() => {
-		let n = fixed(lastQuote * fromAmount, 8)
-		setToAmount(n)
+		if (fromCurrency === "BTC") {
+			let amount = 0;
+			if (isSats && fromCurrency === "BTC") {
+				amount = fromAmount / 100000000
+			} else {
+				amount = fromAmount
+			}
+			let n = lastQuote * amount
+			setToAmount(n)
+		} else if (toCurrency === "BTC") {
+			let n = lastQuote * fromAmount
+			if (isSats) {
+				n = n * 100000000;
+			}
+			setToAmount(n)
+		} else {
+			let n = lastQuote * fromAmount
+			setToAmount(n)
+		}
 	}, [fromCurrency, toCurrency, fromAmount, lastQuote])
 
 	useEffect(() => {
 		if (!wallets) return
 		let balance = wallets[fromCurrency] ? wallets[fromCurrency].balance : 0;
-		setFromBalance((Math.floor(balance * 10000000) / 10000000).toString())
+		setFromBalance(balance.toString())
 	}, [wallets, fromCurrency])
 
 	const onClickSwap = () => {
@@ -114,7 +170,13 @@ const SwapForm = ({ onSwap }) => {
 	}
 
 	const onFillMaxAmount = () => {
-		setFromAmount((Math.floor(fromBalance * 10000000) / 10000000).toString())
+		let balance = 0
+		if (isSats && fromCurrency === "BTC") {
+			balance = fromBalance * 100000000;
+		} else {
+			balance = fromBalance
+		}
+		setFromAmount(balance.toString())
 	}
 
 	const onSwapToFrom = () => {
@@ -129,20 +191,23 @@ const SwapForm = ({ onSwap }) => {
 					From
 					<div className="flex border border-1 mt-1 rounded-md w-full border-gray-600">
 						<div>
-							<input
+							{/* <input
 								value={fromAmount}
 								onInput={e => setFromAmount(e.target.value)}
 								placeholder=""
 								type="number"
 								style={{ textAlign: 'left' }}
 								className="input-default inline-block w-full border border-gray-600 rounded-l-md h-14 bg-gray-700"
-							/>
+							/> */}
+							<FormatCurrencyInput value={fromAmount} symbol={fromCurrency} onValueChange={(values) => onFromAmountChange(values.value)} isSats={false} symbol={fromCurrency} edit={true} style={"text-left input-default inline-block w-full border border-gray-600 rounded-l-md h-14 bg-gray-700"} />
 						</div>
 						<div>
 							<DropDown setCurrency={setFromCurrency} currency={fromCurrency} availableCurrencies={availableWallets} />
 						</div>
 					</div>
-					<div className="text-xs mt-2 cursor-pointer" onClick={() => onFillMaxAmount()}>{CURRENCY_SYMBOL_MAP[fromCurrency]} {fromBalance} available</div>
+					<div className="text-xs mt-2 cursor-pointer" onClick={() => onFillMaxAmount()}>
+						<FormatCurrency value={fromBalance} symbol={fromCurrency} style={"text-white bg-gray-800 w-full"} />
+					</div>
 				</div>
 				<div className="text-4xl flex mt-4">
 					<div className="mx-auto cursor-pointer" onClick={() => onSwapToFrom()}>
@@ -153,14 +218,16 @@ const SwapForm = ({ onSwap }) => {
 					To
 					<div className="flex border border-1 mt-1 rounded-md w-full border-gray-600">
 						<div>
-							<input
+							{/* <input
 								value={toAmount}
 								onInput={e => setToAmount(e.target.value)}
 								placeholder=""
 								type="number"
 								style={{ textAlign: 'left' }}
 								className="input-default inline-block w-full border border-gray-600 rounded-l-md h-14 bg-gray-700"
-							/>
+							/> */}
+							{/* <FormatCurrency value={toAmount} symbol={toCurrency} edit={true} style={"text-left input-default inline-block w-full border border-gray-600 rounded-l-md h-14 bg-gray-700"}/> */}
+							<FormatCurrencyInput value={toAmount} symbol={toCurrency} symbol={toCurrency} edit={true} style={"text-left input-default inline-block w-full border border-gray-600 rounded-l-md h-14 bg-gray-700"} />
 						</div>
 						<div>
 							<DropDown setCurrency={setToCurrency} currency={toCurrency} availableCurrencies={availableToCurrencies} />
@@ -171,7 +238,7 @@ const SwapForm = ({ onSwap }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => onClickSwap()}
-					className="border-gray-600 border-2 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-2 hover:bg-gray-700 text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Swap</p>
 				</button>
 			</div>
@@ -276,7 +343,7 @@ const SwapComplete = ({ swapObj }) => {
 								{swapObj.fromCurrency}
 							</div>
 							<div>
-								{swapObj.fromAmount}
+								<FormatCurrency value={swapObj.fromAmount} symbol={swapObj.fromCurrency} style={"text-white bg-gray-800 w-full text-center"} disableSymbol={false} />
 							</div>
 						</div>
 						<div className="m-auto">
@@ -287,10 +354,9 @@ const SwapComplete = ({ swapObj }) => {
 								{swapObj.toCurrency}
 							</div>
 							<div>
-								{swapObj.toAmount}
+								<FormatCurrency value={swapObj.toAmount} symbol={swapObj.toCurrency} style={"text-white bg-gray-800 w-full text-center"} disableSymbol={false} />
 							</div>
 						</div>
-
 					</div>
 				</div>
 			</div>
@@ -298,7 +364,7 @@ const SwapComplete = ({ swapObj }) => {
 			<div className="absolute inset-x-0 bottom-2 mb-8 text-gray-600">
 				<button
 					onClick={() => storeDispatch(setView(VIEWS.OVERVIEW))}
-					className="border-gray-600 border-1 hover:border-gray-500 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
+					className="border-gray-600 border-1 hover:border-gray-500 text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 					<p>Complete</p>
 				</button>
 			</div>

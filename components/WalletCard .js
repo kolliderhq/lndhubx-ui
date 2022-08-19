@@ -15,6 +15,7 @@ import useSWR from 'swr';
 import { getSWROptions } from 'utils/fetchers';
 import { setAvailableWallets, storeDispatch } from 'contexts';
 import Img from 'react-cool-img';
+import { FormatCurrency } from './Currency';
 
 export const WalletCard = () => {
 	const [wallets, availableWallets, selectedWallet] = useAppSelector(state => [
@@ -110,9 +111,7 @@ const AccountListItem = (currency, wallet) => {
 				</div>
 				<div className="flex justify-end my-auto">
 					<p className="truncate ... text-xl mr-4">
-						{
-							roundDecimal(wallet.balance, currency !== 'BTC' ? 2: 8)
-						}
+						<FormatCurrency value={wallet.balance} symbol={currency} style={"bg-transparent truncate ... text-right w-full"}/>
 					</p>
 				</div>
 			</div>

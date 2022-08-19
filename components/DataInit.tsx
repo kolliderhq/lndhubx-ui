@@ -57,6 +57,11 @@ export const DataInit = () => {
 
 	useEffect(() => {
 		if (userWallets) {
+			if (userWallets.wallets["BTC"]) {
+				let newUserWallets = {...userWallets.wallets, ["SATS"]: {...userWallets.wallets["BTC"], ["balance"]: userWallets.wallets["BTC"].balance * 100000000}}
+				storeDispatch(setWallets({wallets: newUserWallets}));
+				return
+			}
 			storeDispatch(setWallets(userWallets));
 		}
 	}, [userWallets]);

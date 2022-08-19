@@ -22,6 +22,7 @@ import {
 	defaultLocalStore,
 } from 'contexts';
 import { CONTEXTS } from 'consts';
+import { FormatCurrency, FormatCurrencyInput } from './Currency';
 
 export const SendPayment = () => {
 
@@ -79,7 +80,7 @@ export const SendPayment = () => {
 	return (
 		<div className="flex flex-col h-full p-8 relative text-white">
 			<div className="relative w-full">
-				<div className="absolute top-0 right-0 h-16 w-16 text-4xl text-gray-600">
+				<div className="absolute top-0 right-0 h-16 w-16 text-4xl text-white">
 					<div>
 						<button onClick={() => storeDispatch(setView(VIEWS.OVERVIEW))}>
 							<MdClose />
@@ -134,6 +135,8 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [lnurlWithdrawal, setLnurlWithdrawal] = useState("");
 	const [receipientUsername, setReceipientUsername] = useState("");
 
+	const [isSats, setIsSats] = useState(true);
+
 	const [bankInfo, selectedWallet] = useAppSelector(state => [state.bank.info, state.wallets.selectedWallet])
 
 	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
@@ -142,7 +145,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 
 
 	const onCreateLnurlWithdrawal = async () => {
-		let amount = selectedWallet == "BTC" ? (lnurlWithdrawalAmount / 100000000).toString() : lnurlWithdrawalAmount.toString()
+		let amount = selectedWallet == "BTC" && isSats ? (lnurlWithdrawalAmount / 100000000).toString() : lnurlWithdrawalAmount.toString()
 		let currency = selectedWallet ? selectedWallet : "BTC";
 		const data = await getRequest(API_NAMES.CREATE_LNURL_WITHDRAWAL, [amount, currency])
 		if (data.error) {
@@ -158,12 +161,12 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	}
 
 	const onPayKolliderUser = async () => {
-		let amount = lnurlWithdrawalAmount.toString()
+		let amount = (selectedWallet === "BTC" && isSats? lnurlWithdrawalAmount / 100000000: lnurlWithdrawalAmount).toString();
 		let username = receipientUsername;
 		let currency = selectedWallet ? selectedWallet : "BTC";
 		if (!currency) return
 		try {
-			const res = await postRequest(API_NAMES.PAY, [], { paymentRequest: invoice, currency: currency, amount: currency === "BTC" ? (amount/100000000).toFixed(8) : amount, receipient: username });
+			const res = await postRequest(API_NAMES.PAY, [], { paymentRequest: invoice, currency: currency, amount: amount, receipient: username });
 			if (res.success) {
 				displayToast(`Successfully send payment to ${username}`, {
 					type: 'success',
@@ -271,14 +274,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 												Amount you want to send {btcUnit}
 											</div>
 											<div className="border border-1 mt-1 rounded-md w-full border-gray-600">
-												<input
-													value={lnurlWithdrawalAmount}
-													onInput={e => setLnurlWithdrawalAmount(e.target.value)}
-													placeholder="Amount you want to send."
-													type="number"
-													style={{ textAlign: 'left' }}
-													className="input-default inline-block w-full rounded-md h-14 bg-gray-700"
-												/>
+												<FormatCurrencyInput value={lnurlWithdrawalAmount} symbol={selectedWallet} style={"input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"} onValueChange={(values) => setLnurlWithdrawalAmount(values.value)}/>
 											</div>
 											{
 												isPayUser && (
@@ -456,7 +452,7 @@ const DropDown = () => {
 
 	useEffect(() => {
 		let balance = wallets[selectedWallet] ? wallets[selectedWallet].balance : 0;
-		setWalletBalance(roundDecimal(balance, 8));
+		setWalletBalance(balance);
 	}, [wallets, selectedWallet]);
 
 	const onClickDropDown = () => {
@@ -477,7 +473,9 @@ const DropDown = () => {
 				</div>
 				<div className="grid justify-items-end">
 					<div className="flex">
-						<div>{selectedWallet == "BTC" ? walletBalance*100000000 : walletBalance}</div>
+						<div>
+							<FormatCurrency value={walletBalance} symbol={selectedWallet} style={"bg-transparent w-full truncate ... text-right"}/>
+						</div>
 						<div className="my-auto text-2xl">
 							<MdOutlineArrowDropDown className="text-right" />
 						</div>
@@ -515,7 +513,10 @@ const Dropped = ({ onClickDropDown }) => {
 
 						<div className="grid justify-items-end w-full">
 							<div className="flex">
-								<div>{wallets[currency] ? roundDecimal(wallets[currency].balance, 8) : 0}</div>
+								<div>
+									<FormatCurrency value={wallets[currency].balance} symbol={currency} style={"bg-transparent w-full text-right truncate ..."}/>
+									{/* {wallets[currency] ? roundDecimal(wallets[currency].balance, 8) : 0} */}
+								</div>
 							</div>
 						</div>
 					</div>

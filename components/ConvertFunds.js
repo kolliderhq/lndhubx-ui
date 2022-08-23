@@ -172,7 +172,7 @@ const SwapForm = ({ onSwap }) => {
 	const onFillMaxAmount = () => {
 		let balance = 0
 		if (isSats && fromCurrency === "BTC") {
-			balance = fromBalance * 100000000;
+			balance = Math.floor(fromBalance) * 100000000;
 		} else {
 			balance = fromBalance
 		}

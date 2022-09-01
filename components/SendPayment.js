@@ -126,6 +126,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [maxFeeFiat, setMaxFeeFiat] = useState(0);
 	const [invoiceValid, setInvoiceValid] = useState(false);
 	const [quote, setQuote] = useState(1);
+	const [probe, setProbe] = useState(2);
 	const [hasSufficienFunds, setHasSufficientFunds] = useState(true);
 
 	const [isLnurlWithdrawal, setIsLnurlWithdrawal] = useState(true);
@@ -140,6 +141,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [bankInfo, selectedWallet] = useAppSelector(state => [state.bank.info, state.wallets.selectedWallet])
 
 	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
+	const { data: newProbe } = useSWR(invoice ? [API_NAMES.PROBE, invoice] : null);
 
 	const btcUnit = defaultLocalStore.cookieGet(CONTEXTS.LOCAL_STORAGE.DISPLAY_BTC_IN);
 
@@ -202,15 +204,21 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	}, [invoice])
 
 	useEffect(() => {
-		if (!newQuote) return
-		setQuote(newQuote);
-		setFiatAmount(roundDecimal(amount / Number(newQuote.rate), 8))
+		if (!newProbe || !invoice) return
+		const fees_in_sats = newProbe.fees_in_sats;
+		setMaxFee(fees_in_sats);
 		const networkFee = 0.01;
 		if (currency !== "BTC") {
 			setMaxAmountSend(roundDecimal(balance * Number(quote.rate) * (1 - networkFee), 8))
 		} else {
-			setMaxAmountSend(roundDecimal(balance * 100000000 - (balance * 100000000 * networkFee), 2))
+			setMaxAmountSend(roundDecimal(balance * 100000000 - (balance * 100000000 - fees_in_sats), 2))
 		}
+	}, [invoice, newProbe])
+
+	useEffect(() => {
+		if (!newQuote) return
+		setQuote(newQuote);
+		setFiatAmount(roundDecimal(amount / Number(newQuote.rate), 8))
 	}, [newQuote])
 
 	useEffect(() => {
@@ -250,7 +258,6 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		console.log(bankInfo)
 		console.log(amount)
 		if (!bankInfo || !amount) return
-		setMaxFee(amount * Number(bankInfo.lnNetworkMaxFee));
 		setMaxFeeFiat(fiatAmount * Number(bankInfo.lnNetworkMaxFee));
 	}, [amount, bankInfo])
 

@@ -6,6 +6,7 @@ import { setSelectedWallet } from "contexts/modules/wallet";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "hooks";
 import Img from "react-cool-img"
+import useSWR from 'swr';
 import { UI } from "consts";
 import { API_NAMES } from "consts";
 import { getRequest } from "utils/api";
@@ -93,7 +94,16 @@ export const Receive = () => {
 
 const InvoiceForm = ({ onCreateInvoice, currency }) => {
 	const [amount, setAmount] = useState(0);
+	const [satsAmount, setSatsAmount] = useState(0);
 	const [memo, setMemo] = useState("");
+	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
+
+	useEffect(() => {
+		if (!newQuote) return
+		if (currency !== "BTC") {
+			setSatsAmount(roundDecimal(amount * Number(newQuote.rate) * 100000000, 2))
+		}
+	}, [newQuote])
 	return (
 		<div>
 			<div className="text-left mt-8">
@@ -103,6 +113,11 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 						<FormatCurrencyInput value={amount} symbol={currency} style={"input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"} onValueChange={(values) => setAmount(values.value)}/>
 					</div>
 				</div>
+				{
+					currency !== "BTC" && (
+						<div>{satsAmount} sats</div>
+					)
+				}
 				<div className="mt-8">
 					Description <span className="text-xs">(optional)</span>
 					<div className="border border-1 border-gray-600 mt-1 rounded-md w-full relative">

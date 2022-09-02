@@ -200,7 +200,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		} catch (err) {
 			setInvoiceValid(false)
 		}
-	}, [invoice, newRoute])
+	}, [invoice])
 
 	useEffect(() => {
 		if (!newQuote) return

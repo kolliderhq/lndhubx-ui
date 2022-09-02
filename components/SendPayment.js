@@ -349,7 +349,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 										className="input-default inline-block w-full rounded-md border-transparent h-14 bg-gray-700"
 									/>
 								</div>
-								<div className="mt-2 px-2">Max amount to send: {maxAmountSend*100000000} sats</div>
+								<div className="mt-2 px-2">Max amount to send: {roundDecimal(maxAmountSend*100000000, 2)} sats</div>
 							</div>
 						</div>
 						<div className="grid grid-cols-2 gap-2 mt-2 p-4 font-light">

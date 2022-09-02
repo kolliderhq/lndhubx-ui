@@ -171,9 +171,9 @@ const API: I_API = {
 			stale: API_TIME.NONE,
 			allowNull: true,
 		},
-		PROBE: {
+		QUERY_ROUTE: {
 			route: (payment_request) =>
-				`/probe?payment_request=${payment_request}`,
+				`/query_route?payment_request=${payment_request}`,
 			method: 'get',
 			base: END_POINTS.BACK,
 			stale: API_TIME.SHORTEST,

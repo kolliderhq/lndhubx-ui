@@ -107,7 +107,7 @@ export const SendPayment = () => {
 							isPaymentComplete ? (
 								<PaymentComplete paymentObj={paymentObj} />
 							) : (
-								<InvoiceForm invoice={invoice} setInvoice={setInvoice} onPayInvoice={onPayInvoice} currency={selectedWallet} balance={balance} />
+								<InvoiceForm invoice={invoice} setInvoice={setInvoice} onPayInvoice={onPayInvoice} currency={selectedWallet} balance={wallets[selectedWallet].balance} />
 							)
 						}
 					</div>
@@ -140,6 +140,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [bankInfo, selectedWallet] = useAppSelector(state => [state.bank.info, state.wallets.selectedWallet])
 
 	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
+	const { data: newRoute } = useSWR(invoice ? [API_NAMES.QUERY_ROUTE, invoice] : null);
 
 	const btcUnit = defaultLocalStore.cookieGet(CONTEXTS.LOCAL_STORAGE.DISPLAY_BTC_IN);
 
@@ -205,13 +206,23 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		if (!newQuote) return
 		setQuote(newQuote);
 		setFiatAmount(roundDecimal(amount / Number(newQuote.rate), 8))
-		const networkFee = 0.01;
+	}, [newQuote, balance])
+
+	useEffect(() => {
+		if (!invoice || !newRoute) return
+		const fees_in_sats = newRoute.totalFee;
+		setMaxFee(fees_in_sats);
 		if (currency !== "BTC") {
-			setMaxAmountSend(roundDecimal(balance * Number(quote.rate) * (1 - networkFee), 8))
+			if (!newQuote) return
+			let balanceInSats = balance * Number(newQuote.rate) * 100000000;
+			setMaxAmountSend(roundDecimal((balanceInSats - fees_in_sats) / 100000000, 8))
+			let fiatAmountInSats = amount / Number(newQuote.rate) * 100000000
+			setMaxFeeFiat((fiatAmountInSats - fees_in_sats) / 100000000);
 		} else {
-			setMaxAmountSend(roundDecimal(balance * 100000000 - (balance * 100000000 * networkFee), 2))
+			let balanceInSats = balance * 100000000
+			setMaxAmountSend(roundDecimal((balanceInSats - fees_in_sats) / 100000000, 8))
 		}
-	}, [newQuote])
+	}, [newQuote, newRoute])
 
 	useEffect(() => {
 		if (currency === "BTC" && balance < amount) {
@@ -250,8 +261,6 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 		console.log(bankInfo)
 		console.log(amount)
 		if (!bankInfo || !amount) return
-		setMaxFee(amount * Number(bankInfo.lnNetworkMaxFee));
-		setMaxFeeFiat(fiatAmount * Number(bankInfo.lnNetworkMaxFee));
 	}, [amount, bankInfo])
 
 	return (
@@ -340,14 +349,14 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 										className="input-default inline-block w-full rounded-md border-transparent h-14 bg-gray-700"
 									/>
 								</div>
-								<div className="mt-2 px-2">Max Amount to send: {maxAmountSend} sats</div>
+								<div className="mt-2 px-2">Max amount to send: {roundDecimal(maxAmountSend*100000000, 2)} sats</div>
 							</div>
 						</div>
 						<div className="grid grid-cols-2 gap-2 mt-2 p-4 font-light">
 							<div className="text-left w-full">Amount</div>
 							<div className="text-right w-full">
 								<div>
-									{amount*100000000} sats
+									{Math.floor(amount*100000000)} sats
 								</div>
 								{
 									currency !== "BTC" && (
@@ -359,7 +368,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 							<div className="text-left w-full">Max Fee</div>
 							<div className="text-right w-full">
 								<div>
-									{roundDecimal(maxFee*100000000, 2)} sats
+									{roundDecimal(maxFee, 2)} sats
 								</div>
 								{
 									currency !== "BTC" && (

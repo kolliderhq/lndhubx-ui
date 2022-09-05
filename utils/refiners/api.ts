@@ -82,6 +82,11 @@ refiner.set(API_NAMES.SWAP, data => {
 	return camelCaseAllKeys(data);
 });
 
+refiner.set(API_NAMES.QUERY_ROUTE, data => {
+	console.log({data: camelCaseAllKeys(data)})
+	return camelCaseAllKeys(data);
+});
+
 refiner.set(API_NAMES.QUOTE, data => {
 	console.log({data: camelCaseAllKeys(data)})
 	return camelCaseAllKeys(data);

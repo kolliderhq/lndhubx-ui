@@ -171,6 +171,14 @@ const API: I_API = {
 			stale: API_TIME.NONE,
 			allowNull: true,
 		},
+		QUERY_ROUTE: {
+			route: (payment_request) =>
+				`/query_route?payment_request=${payment_request}`,
+			method: 'get',
+			base: END_POINTS.BACK,
+			stale: API_TIME.SHORTEST,
+			allowNull: true,
+		},
 		QUOTE: {
 			route: (fromCurrency, toCurrency, amount) =>
 				`/quote?amount=${amount}&from_currency=${fromCurrency}&to_currency=${toCurrency}`,

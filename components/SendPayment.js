@@ -140,6 +140,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	const [bankInfo, selectedWallet] = useAppSelector(state => [state.bank.info, state.wallets.selectedWallet])
 
 	const { data: newQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", amount] : null);
+	const { data: fiatWithdrawalQuote } = useSWR(currency !== "BTC" ? [API_NAMES.QUOTE, currency, "BTC", lnurlWithdrawalAmount] : null);
 	const { data: newRoute } = useSWR(invoice ? [API_NAMES.QUERY_ROUTE, invoice] : null);
 
 	const btcUnit = defaultLocalStore.cookieGet(CONTEXTS.LOCAL_STORAGE.DISPLAY_BTC_IN);
@@ -162,7 +163,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	}
 
 	const onPayKolliderUser = async () => {
-		let amount = (selectedWallet === "BTC" && isSats? lnurlWithdrawalAmount / 100000000: lnurlWithdrawalAmount).toString();
+		let amount = (selectedWallet === "BTC" && isSats ? lnurlWithdrawalAmount / 100000000 : lnurlWithdrawalAmount).toString();
 		let username = receipientUsername;
 		let currency = selectedWallet ? selectedWallet : "BTC";
 		if (!currency) return
@@ -225,6 +226,11 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 	}, [newQuote, newRoute])
 
 	useEffect(() => {
+		if (!fiatWithdrawalQuote) return
+		setQuote(Number(fiatWithdrawalQuote.rate))
+	}, [fiatWithdrawalQuote])
+
+	useEffect(() => {
 		if (currency === "BTC" && balance < amount) {
 			setHasSufficientFunds(false);
 		} else if (currency !== "BTC" && balance < fiatAmount) {
@@ -283,7 +289,20 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 												Amount you want to send {btcUnit}
 											</div>
 											<div className="border border-1 mt-1 rounded-md w-full border-gray-600">
-												<FormatCurrencyInput value={lnurlWithdrawalAmount} symbol={selectedWallet} style={"input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"} onValueChange={(values) => setLnurlWithdrawalAmount(values.value)}/>
+												<FormatCurrencyInput value={lnurlWithdrawalAmount} symbol={selectedWallet} style={"input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"} onValueChange={(values) => setLnurlWithdrawalAmount(values.value)} />
+											</div>
+											<div className="mt-2">
+												{
+													selectedWallet !== "BTC" && (
+														<div className="text-xs">
+															You will send: {
+																<FormatCurrency value={lnurlWithdrawalAmount * quote} symbol={"BTC"} style={"text-xs"} />
+															} @ {
+																<FormatCurrency value={1 / quote} symbol={selectedWallet} style={"text-xs"} />
+															}
+														</div>
+													)
+												}
 											</div>
 											{
 												isPayUser && (
@@ -349,14 +368,14 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 										className="input-default inline-block w-full rounded-md border-transparent h-14 bg-gray-700"
 									/>
 								</div>
-								<div className="mt-2 px-2">Max amount to send: {roundDecimal(maxAmountSend*100000000, 2)} sats</div>
+								<div className="mt-2 px-2">Max amount to send: {roundDecimal(maxAmountSend * 100000000, 2)} sats</div>
 							</div>
 						</div>
 						<div className="grid grid-cols-2 gap-2 mt-2 p-4 font-light">
 							<div className="text-left w-full">Amount</div>
 							<div className="text-right w-full">
 								<div>
-									{Math.floor(amount*100000000)} sats
+									{Math.floor(amount * 100000000)} sats
 								</div>
 								{
 									currency !== "BTC" && (
@@ -397,7 +416,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 							{
 								isLnurlWithdrawal && (
 									<button
-										onClick={() => { onCreateLnurlWithdrawal()}}
+										onClick={() => { onCreateLnurlWithdrawal() }}
 										className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 										<div className="flex flex-row">
 											<div className="mx-auto w-32 flex text-white">
@@ -411,7 +430,7 @@ const InvoiceForm = ({ invoice, setInvoice, onPayInvoice, currency, balance }) =
 							{
 								isPayUser && (
 									<button
-										onClick={() => { onPayKolliderUser()}}
+										onClick={() => { onPayKolliderUser() }}
 										className="border-gray-600 hover:bg-gray-700 hover:text-white cursor-pointer border rounded-lg w-5/6 px-5 py-3">
 										<div className="flex flex-row">
 											<div className="mx-auto w-32 flex text-white">
@@ -483,7 +502,7 @@ const DropDown = () => {
 				<div className="grid justify-items-end">
 					<div className="flex">
 						<div>
-							<FormatCurrency value={walletBalance} symbol={selectedWallet} style={"bg-transparent w-full truncate ... text-right"}/>
+							<FormatCurrency value={walletBalance} symbol={selectedWallet} style={"bg-transparent w-full truncate ... text-right"} />
 						</div>
 						<div className="my-auto text-2xl">
 							<MdOutlineArrowDropDown className="text-right" />
@@ -523,7 +542,7 @@ const Dropped = ({ onClickDropDown }) => {
 						<div className="grid justify-items-end w-full">
 							<div className="flex">
 								<div>
-									<FormatCurrency value={wallets[currency].balance} symbol={currency} style={"bg-transparent w-full text-right truncate ..."}/>
+									<FormatCurrency value={wallets[currency].balance} symbol={currency} style={"bg-transparent w-full text-right truncate ..."} />
 									{/* {wallets[currency] ? roundDecimal(wallets[currency].balance, 8) : 0} */}
 								</div>
 							</div>

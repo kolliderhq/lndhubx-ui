@@ -207,12 +207,27 @@ const SwapForm = ({ onSwap }) => {
 						</div>
 					</div>
 					<div className="text-xs mt-2 cursor-pointer" onClick={() => onFillMaxAmount()}>
-						<FormatCurrency value={fromBalance} symbol={fromCurrency} style={"text-white bg-gray-800 w-full"} />
+						<div className="">
+							<span className="mr-2">Balance</span>
+							<FormatCurrency value={fromBalance} symbol={fromCurrency} style={"text-white bg-gray-800 w-full"} />
+						</div>
+						<div className="flex flex-row">
+							<span className="mr-2">Rate: </span>
+							<div className='text-xs'>
+								{
+									<FormatCurrency value={lastQuote} symbol={toCurrency} style={"text-xs flex"} />
+								}
+							</div>
+						</div>
 					</div>
 				</div>
-				<div className="text-4xl flex mt-4">
-					<div className="mx-auto cursor-pointer" onClick={() => onSwapToFrom()}>
-						<MdSwapVert />
+				<div className="text-4xl mt-4">
+					<div className="cursor-pointer flex" onClick={() => onSwapToFrom()}>
+						<div className="mx-auto">
+							<div className="mx-auto">
+								<MdSwapVert />
+							</div>
+						</div>
 					</div>
 				</div>
 				<div className="">

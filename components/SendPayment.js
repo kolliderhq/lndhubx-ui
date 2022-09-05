@@ -107,7 +107,7 @@ export const SendPayment = () => {
 							isPaymentComplete ? (
 								<PaymentComplete paymentObj={paymentObj} />
 							) : (
-								<InvoiceForm invoice={invoice} setInvoice={setInvoice} onPayInvoice={onPayInvoice} currency={selectedWallet} balance={wallets[selectedWallet].balance} />
+								<InvoiceForm invoice={invoice} setInvoice={setInvoice} onPayInvoice={onPayInvoice} currency={selectedWallet} balance={wallets[selectedWallet]?.balance? wallets[selectedWallet].balance : 0} />
 							)
 						}
 					</div>

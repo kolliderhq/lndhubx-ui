@@ -162,7 +162,7 @@ const SwapForm = ({ onSwap }) => {
 	useEffect(() => {
 		if (!wallets) return
 		let balance = wallets[fromCurrency] ? wallets[fromCurrency].balance : 0;
-		setFromBalance(balance.toString())
+		setFromBalance(Number(balance).toPrecision())
 	}, [wallets, fromCurrency])
 
 	const onClickSwap = () => {
@@ -170,9 +170,10 @@ const SwapForm = ({ onSwap }) => {
 	}
 
 	const onFillMaxAmount = () => {
+		console.log(Number(fromBalance).toPrecision())
 		let balance = 0
 		if (isSats && fromCurrency === "BTC") {
-			balance = Math.floor(fromBalance) * 100000000;
+			balance = roundDecimal(fromBalance, 8) * 100000000;
 		} else {
 			balance = fromBalance
 		}

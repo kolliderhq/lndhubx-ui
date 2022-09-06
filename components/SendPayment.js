@@ -542,7 +542,7 @@ const Dropped = ({ onClickDropDown }) => {
 						<div className="grid justify-items-end w-full">
 							<div className="flex">
 								<div>
-									<FormatCurrency value={wallets[currency].balance} symbol={currency} style={"bg-transparent w-full text-right truncate ..."} />
+									<FormatCurrency value={wallets[currency]?.balance? wallets[currency].balance: 0} symbol={currency} style={"bg-transparent w-full text-right truncate ..."} />
 									{/* {wallets[currency] ? roundDecimal(wallets[currency].balance, 8) : 0} */}
 								</div>
 							</div>

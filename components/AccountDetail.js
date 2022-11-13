@@ -61,10 +61,6 @@ export const AccountDetail = () => {
 								<div className="">
 									Send
 								</div>
-
-								<div className="my-auto text-lg ml-2">
-									<MdSend />
-								</div>
 							</div>
 						</button>
 					</div>
@@ -73,9 +69,6 @@ export const AccountDetail = () => {
 							<div className="mx-auto flex">
 								<div className="">
 									Receive
-								</div>
-								<div className="my-auto text-lg ml-2">
-									<MdFileDownload />
 								</div>
 							</div>
 						</button>

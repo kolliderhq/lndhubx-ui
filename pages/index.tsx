@@ -59,6 +59,10 @@ export default function Home() {
 			<Dialogs />
 			<Header />
 			<div className="lg:h-screen h-full w-full">
+				<div className='mx-auto w-80 bg-yellow-500 text-center rounded mb-4 p-2 animate-pulse font-bold text-black'>
+					This app is sunset and will stop working soon. We will release a new version of Kollider Wallet in form of a browser extension.
+					Please withdraw all your funds!
+				</div>
 				<div className="flex h-full">
 					<div className="bg-white font-semibold mx-auto text-center rounded-3xl h-128 w-128 shadow-2xl shadow-indigo-500/50 bg-gradient-to-r from-purple-500 to-pink-500 p-1">
 						<div className="w-full h-full bg-gray-800 rounded-3xl">

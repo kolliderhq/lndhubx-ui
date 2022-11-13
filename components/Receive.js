@@ -29,16 +29,16 @@ export const Receive = () => {
 		}
 		amount = amount.toString()
 		let currency = selectedWallet ? selectedWallet : "BTC";
-		const data = await getRequest(API_NAMES.ADD_INVOICE, [amount, currency, memo])
-		if (data.error) {
-			displayToast(`${data.error}`, {
-				type: 'error',
-				level: TOAST_LEVEL.CRITICAL,
-				toastId: 'copy-invoice',
-			});
-		} else {
-			setInvoice(data.paymentRequest)
-		}
+		// const data = await getRequest(API_NAMES.ADD_INVOICE, [amount, currency, memo])
+		// if (data.error) {
+		displayToast(`Deposit disabled as this app is sunset. Please only withdraw!`, {
+			type: 'error',
+			level: TOAST_LEVEL.CRITICAL,
+			toastId: 'copy-invoice',
+		});
+		// } else {
+		// 	setInvoice(data.paymentRequest)
+		// }
 	}
 
 	const resetInovice = () => {
@@ -110,7 +110,7 @@ const InvoiceForm = ({ onCreateInvoice, currency }) => {
 				<div className="">
 					Amount <span className="text-xs">(in {currency === "BTC" ? "sats" : currency})</span>
 					<div className="border border-1 mt-1 rounded-md w-full border-gray-600">
-						<FormatCurrencyInput value={amount} symbol={currency} style={"input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"} onValueChange={(values) => setAmount(values.value)}/>
+						<FormatCurrencyInput value={amount} symbol={currency} style={"input-default inline-block w-full border rounded-md border-transparent h-14 bg-gray-700"} onValueChange={(values) => setAmount(values.value)} />
 					</div>
 				</div>
 				{
@@ -175,7 +175,7 @@ const DropDown = ({ resetInovice }) => {
 				<div className="grid justify-items-end">
 					<div className="flex">
 						<div>
-							<FormatCurrency value={walletBalance} symbol={selectedWallet} style={"bg-transparent w-full truncate ... text-right"}/>
+							<FormatCurrency value={walletBalance} symbol={selectedWallet} style={"bg-transparent w-full truncate ... text-right"} />
 						</div>
 						<div className="my-auto text-2xl">
 							<MdOutlineArrowDropDown className="text-right" />
@@ -216,7 +216,7 @@ const Dropped = ({ onClickDropDown }) => {
 							<div className="flex">
 								<div>
 									{/* {wallets[currency] ? roundDecimal(wallets[currency].balance, 8) : 0} */}
-									<FormatCurrency value={wallets[currency]?.balance? wallets[currency].balance: 0} symbol={currency} style={"bg-transparent w-full text-right truncate ..."}/>
+									<FormatCurrency value={wallets[currency]?.balance ? wallets[currency].balance : 0} symbol={currency} style={"bg-transparent w-full text-right truncate ..."} />
 								</div>
 							</div>
 						</div>

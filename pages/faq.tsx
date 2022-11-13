@@ -91,6 +91,56 @@ export default function FAQ() {
 							)
 						}
 					</div>
+					<div className="">
+						<div className="flex">
+							<div className="cursor-pointer flex" onClick={() => onOpenTab("tab3")}>
+								<div className="text-xl font-bold">What are the risks?</div>
+								<div className="m-auto text-3xl">
+									{
+										openTabs["tab2"]? (
+											<MdKeyboardArrowDown/>
+										): (
+											<MdKeyboardArrowRight/>
+										)
+									}
+								</div>
+							</div>
+						</div>
+						{
+							openTabs["tab3"] && (
+								<div className="mt-4">
+									<p className="text-sm"> 
+									Holding synthetic fiat is tied to three main risk factors.
+									</p><br/>
+									<h3 className="text-lg font-bolt">Counter Party Risk</h3>
+									<p>Since Kollider Pay is custodial you're ultimately relying on the security of our hot wallets as well as on the integrity of the team that runs 
+										the platform. At Kollider we believe that security of funds is paramount and takes priority above all. Nevertheless, it is impossible to design
+										a system that is 100% fault tollerant and hacks can never be rulled out. By settling every trade instantly we try to mitigate this risk to an absolute
+										minimum.
+									</p>
+									<br/>
+									<h3 className="text-lg font-bolt">Liquidity Risk</h3>
+									<p>Since synthetic fiat is nothing more than a short position of an inversely price perpetual swap traded on the Kollider perpetual
+										futures exchange you're relying on the fact that there always needs to be a counterparty that allows you to unwind your position.
+										In times of extreme market conditions it is possible that liquidity on the buy side (needed to convert your synthetic fiat back into Bitcoin)
+										dries up and unwinding your position becomes impossible. If this isn't connecte to a sudden drop in price this is generally not a problem as
+										you're synthetic fiat will maintain its peg.
+									</p>
+									<br/>
+									<h3 className="text-lg font-bolt">Market Risk</h3>
+									<p>Mechanically this is the biggest risk that synthetic fiat positions face. If there is a sharp drop in price it can happen that long positions
+										(users that hold the other side of our synthetic fiat) are getting liquidated. Even with a leverage of 1x longs can get liquiditated whilst
+										shorts cannot. This is not a problem until there is not enough taker appetite to take these long positions on. Kolliders risk engine tries to
+										mitgate this risk by starting the liquidation process well in advance to find another user to take on the risk. However, if this is not possible
+										our insurance fund will chip in and pay for the difference. If the insurance fund gets depleted Kollider has a last resort strategy to unwind 
+										bad position which is called auto deleveraging. At this point we have to sell your synthetic fiat and you will returned your Bitcoin. In otherwords
+										your fiat will be force sold in order neutralise the riks. 
+									</p>
+									<h3></h3>
+								</div>
+							)
+						}
+					</div>
 				</div>
 			</div>
 			</div>
